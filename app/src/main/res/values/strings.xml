@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Rpibell</string>
+    <string name="LiveViewButtonText">ON / OFF</string>
 </resources>
