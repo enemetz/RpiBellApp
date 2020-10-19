@@ -2,10 +2,6 @@ package com.example.rpibell;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
-import android.webkit.WebSettings;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -21,6 +17,8 @@ public class LoginPage  extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login_page);
 
@@ -38,10 +36,11 @@ public class LoginPage  extends AppCompatActivity {
                 return;
             }
 
-            Toast.makeText(LoginPage.this,"WELCOME, " + userNameInput.getText().toString().toUpperCase() , Toast.LENGTH_LONG).show();
-            Intent intent = new Intent(LoginPage.this, MainActivity.class);
-            intent.putExtra("advice", userNameInput.getText().toString());
+            Toast.makeText(LoginPage.this,"WELCOME, " + userNameInput.getText().toString().toUpperCase() , Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(LoginPage.this, UserHomePage.class);
+            intent.putExtra("user", userNameInput.getText().toString());
             startActivity(intent);
+            finish();
         });
 
     }

@@ -6,4 +6,7 @@
     <string name="PasswordInputHint">Password</string>
     <string name="loginButtonText">LOGIN</string>
     <string name="NewUserButtonText">New User</string>
+    <string name="live_view_button_text">Live View</string>
+    <string name="BackButtonText">BACK</string>
+    <string name="log_out_button_Text">LOG OUT</string>
 </resources>
