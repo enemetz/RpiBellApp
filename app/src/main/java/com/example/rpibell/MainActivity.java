@@ -31,18 +31,13 @@ public class MainActivity extends AppCompatActivity {
         off = false;
 
         mButton = findViewById(R.id.LiveViewButton);
-        mButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view)
-            {
-                if (!off) {
-                    livecam.loadUrl("about:blank");
-                    off = !off;
-                } else {
-                    livecam.loadUrl("http://www.youtube.com"); // tested using google.com
-                    off = !off;
-                }
+        mButton.setOnClickListener(view -> {
+            if (!off) {
+                livecam.loadUrl("about:blank");
+            } else {
+                livecam.loadUrl("http://www.youtube.com"); // tested using google.com
             }
+            off = !off;
         });
 
     }
