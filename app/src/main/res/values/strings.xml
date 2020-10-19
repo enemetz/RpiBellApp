@@ -1,4 +1,12 @@
 <resources>
     <string name="app_name">Rpibell</string>
     <string name="LiveViewButtonText">ON / OFF</string>
+    <string name="touchless_doorbell_login_text">TouchLess DoorBell Login</string>
+    <string name="UserNameInputHint">Username</string>
+    <string name="PasswordInputHint">Password</string>
+    <string name="loginButtonText">LOGIN</string>
+    <string name="NewUserButtonText">New User</string>
+    <string name="live_view_button_text">Live View</string>
+    <string name="BackButtonText">BACK</string>
+    <string name="log_out_button_Text">LOG OUT</string>
 </resources>
