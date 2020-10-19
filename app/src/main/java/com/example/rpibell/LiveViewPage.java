@@ -36,8 +36,11 @@ public class LiveViewPage extends AppCompatActivity {
         webSettings.setJavaScriptEnabled(true);
         livecam.setWebViewClient(new WebViewClient()); // forces all URLs to run only inside this app and doesn't redirect it to chrome
 
+        livecam.getSettings().setLoadWithOverviewMode(true);
+        livecam.getSettings().setUseWideViewPort(true);
+
          // upon getting to the live-view part of the app, this will be on
-        livecam.loadUrl("https://www.youtube.com/watch?v=5qap5aO4i9A&ab_channel=ChilledCow"); // tested using google.com
+        livecam.loadUrl("http://192.168.86.227:5000/"); // tested using google.com
         off = false;
 
         OnOffLiveButton = this.<Button>findViewById(R.id.LiveViewButton);
@@ -45,7 +48,7 @@ public class LiveViewPage extends AppCompatActivity {
             if (!off) {
                 livecam.loadUrl("about:blank");
             } else {
-                livecam.loadUrl("https://www.youtube.com/watch?v=5qap5aO4i9A&ab_channel=ChilledCow"); // tested using google.com
+                livecam.loadUrl("http://192.168.86.227:5000/"); // tested using google.com
             }
             off = !off;
         });
