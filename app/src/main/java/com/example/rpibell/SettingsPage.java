@@ -48,7 +48,7 @@ public class SettingsPage extends AppCompatActivity {
         userName = getIntent().getExtras().getString("user");
 
         // once the back button is pressed, request the raspberry pi to end the live stream and then take the user back to the homepage
-        back = this.<Button>findViewById(R.id.GoBackButtonLiveToHomePage);
+        back = this.<Button>findViewById(R.id.backFromSettingsToHome);
         back.setOnClickListener(view -> {
             try
             {

@@ -80,7 +80,7 @@ public class UserHomePage extends AppCompatActivity {
         // once the Settings Button is pressed, go to the settings page
         settings = findViewById(R.id.SettingsButton);
         settings.setOnClickListener(view -> {
-            Intent intent = new Intent(UserHomePage.this, LoginPage.class);
+            Intent intent = new Intent(UserHomePage.this, SettingsPage.class);
             intent.putExtra("user", userName);
             intent.putExtra("IP",IP);
             startActivity(intent);
