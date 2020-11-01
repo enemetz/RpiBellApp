@@ -9,4 +9,5 @@
     <string name="live_view_button_text">Live View</string>
     <string name="BackButtonText">BACK</string>
     <string name="log_out_button_Text">LOG OUT</string>
+    <string name="settings">Settings</string>
 </resources>

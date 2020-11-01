@@ -27,6 +27,7 @@ public class UserHomePage extends AppCompatActivity {
     public TextView welcomeBanner;         // Text at top that will be used in order to greet the user
     public String userName;                // current user
     public Button liveView;                // live view button on the page
+    public Button settings;                // settings button on the page
     public Button logOut;                  // log out button on the page
     public String IP;                      // IP address of the user's Raspberry Pi device
     public final int WAIT = 2000;          // amount of time to pause the app in order to give Raspberry Pi Camera time to warm up
@@ -73,6 +74,17 @@ public class UserHomePage extends AppCompatActivity {
                 Toast.makeText(UserHomePage.this,"ERROR LOADING STREAM ..." , Toast.LENGTH_LONG).show();
                 e1.printStackTrace();
             }
+        });
+
+
+        // once the Settings Button is pressed, go to the settings page
+        settings = findViewById(R.id.SettingsButton);
+        settings.setOnClickListener(view -> {
+            Intent intent = new Intent(UserHomePage.this, LoginPage.class);
+            intent.putExtra("user", userName);
+            intent.putExtra("IP",IP);
+            startActivity(intent);
+            finish();
         });
 
         // once the Log Out button is pressed, go back to the log in page

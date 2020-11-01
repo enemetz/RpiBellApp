@@ -39,6 +39,16 @@
             </intent-filter>
         </activity>
 
+        <activity android:name=".SettingsPage"
+            android:label="Settings Page"
+            android:parentActivityName=".UserHomePage">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
     </application>
 
 

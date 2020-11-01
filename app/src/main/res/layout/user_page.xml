@@ -30,6 +30,18 @@
         app:layout_constraintVertical_bias="0.302" />
 
     <Button
+        android:id="@+id/SettingsButton"
+        android:layout_width="134dp"
+        android:layout_height="40dp"
+        android:text="@string/settings"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.501"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.474" />
+
+    <Button
         android:id="@+id/logOutButton"
         android:layout_width="134dp"
         android:layout_height="40dp"
@@ -39,5 +51,5 @@
         app:layout_constraintHorizontal_bias="0.501"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.472" />
+        app:layout_constraintVertical_bias="0.641" />
 </androidx.constraintlayout.widget.ConstraintLayout>
