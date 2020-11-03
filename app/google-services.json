@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "1062293797461",
+    "firebase_url": "https://rpibell-notifs.firebaseio.com",
+    "project_id": "rpibell-notifs",
+    "storage_bucket": "rpibell-notifs.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1062293797461:android:df092b49f203d30f6332dc",
+        "android_client_info": {
+          "package_name": "com.example.rpibell"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1062293797461-n147bdep3fv2e6h7chko9s5jr0ib7709.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBeq-cJ5XBzu85Ljr3BN6n1eDVRHwZum10"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1062293797461-n147bdep3fv2e6h7chko9s5jr0ib7709.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
