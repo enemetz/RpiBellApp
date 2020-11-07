@@ -56,7 +56,7 @@ public class LoginPage extends AppCompatActivity {
                 // here the username and password from the user will be checked by the database
                 // the hostname of the RPI will be returned, which will be used in order to get the IP address
                 // for now, I am using my RPi's name directly (possible since the device is on the same wifi network)
-                IP = new NetTask().execute("raspberrypi").get();
+                IP = new NetTask().execute("czpi1").get();
 
                 // go to the next screen (home screen) ; bring hidden variables along to use for later functions
                 Intent intent = new Intent(LoginPage.this, UserHomePage.class);
