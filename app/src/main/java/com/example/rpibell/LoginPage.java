@@ -11,13 +11,19 @@ import android.widget.Toast;
 import java.net.*;
 import java.io.*;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.firebase.messaging.FirebaseMessaging;
+import com.google.android.gms.tasks.Task;
+
 
 /**
  * This is the LoginPage class. This is the first screen the user is greeted with.
  * Here a username and password must be given in order to access the rest of the application.
  */
 public class LoginPage extends AppCompatActivity {
+    private static final String TAG = "MyFirebaseMsgService";
 
     // Global variables
     public Button logIn;                // log in button
@@ -68,6 +74,28 @@ public class LoginPage extends AppCompatActivity {
                 e1.printStackTrace();
             }
         });
+
+        // Gets current token
+        FirebaseMessaging.getInstance().getToken()
+                .addOnCompleteListener(new OnCompleteListener<String>() {
+                    @Override
+                    public void onComplete(@NonNull Task<String> task) {
+                        if (!task.isSuccessful()) {
+                            Log.w(TAG, "Fetching FCM registration token failed", task.getException());
+                            return;
+                        }
+
+                        // Get new FCM registration token
+                        String token = task.getResult();
+                        Log.d(TAG, "Registration token " + token);
+
+                        // Log and toast
+                        //String msg = getString(token);
+                        //Log.d(TAG, msg);
+                        Toast.makeText(LoginPage.this, token, Toast.LENGTH_SHORT).show();
+                    }
+                });
+
     } // ends the onCreate() method
 
     /**
