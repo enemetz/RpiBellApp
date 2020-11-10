@@ -1,10 +1,23 @@
 package com.example.rpibell;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
+import android.Manifest;
+import android.annotation.TargetApi;
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.ContextWrapper;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.SystemClock;
 import android.util.Log;
 import android.webkit.WebSettings;
@@ -15,8 +28,15 @@ import android.widget.Toast;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.nio.charset.StandardCharsets;
+
+import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
+import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 
 /**
  * This is the LiveViewPage class.
@@ -81,16 +101,54 @@ public class LiveViewPage extends AppCompatActivity {
         picButton.setOnClickListener(view -> {
             try
             {
+                //Log.e("status","before 2");
                 new NetTask2().execute(IP); // here tell, the server to turn off the live stream
+                //Log.e("status","after 2");
                 Toast.makeText(LiveViewPage.this,"TAKING PICTURE..." , Toast.LENGTH_LONG).show();
-                SystemClock.sleep(2000);    // give the camera at least 2 seconds to warm up
+                SystemClock.sleep(3000);    // give the camera at least 3 seconds to warm up
+                //Log.e("status","after sleep / before loading");
                 liveCam.loadUrl(url);
+                //Log.e("status","before 3");
+
+                verifyStoragePermissions(this);
+                new NetTask3().execute(IP); // here tell, send over the picture taken
+
+                //Log.e("status","after 3");
             } catch (Exception e1) {
                 e1.printStackTrace();
             }
         });
 
+
     } // ends the onCreate() method
+
+
+    /**
+     * Checks if the app has permission to write to device storage
+     *
+     * If the app does not has permission then the user will be prompted to grant permissions
+     *
+     * @param activity
+     */
+    public static void verifyStoragePermissions(Activity activity) {
+        final int REQUEST_EXTERNAL_STORAGE = 1;
+        String[] PERMISSIONS_STORAGE = {
+                Manifest.permission.READ_EXTERNAL_STORAGE,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE
+        };
+
+        // Check if we have write permission
+        int permission = ActivityCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+
+        if (permission != PackageManager.PERMISSION_GRANTED) {
+            // We don't have permission so prompt the user
+            ActivityCompat.requestPermissions(
+                    activity,
+                    PERMISSIONS_STORAGE,
+                    REQUEST_EXTERNAL_STORAGE
+            );
+        }
+    }
 
     /**
      * This is the NetTask class that will be used to request the raspberry pi device to turn off the live stream.
@@ -108,7 +166,6 @@ public class LiveViewPage extends AppCompatActivity {
          */
         @Override
         protected String doInBackground(String[] params) {
-            Log.e("HERE1", params[0]);
             try {
                 // set local variables
                 Socket socket=new Socket(params[0],RPiDeviceMainServerPort);
@@ -130,26 +187,25 @@ public class LiveViewPage extends AppCompatActivity {
                 e.printStackTrace();
             }
             return null;
-        } // ends the doInBackground(0 method
-    } // ends the NetTask class
+        } // ends the doInBackground() method
+    } // ends the NetTask1 class
 
 
     /**
-     * This is the NetTask class that will be used to request the raspberry pi device to turn off the live stream.
-     * This will be executed in the background.
+     * This is the NetTask class that will be used to request the raspberry pi device to take a picture
+     * while the live stream is running.
      */
     public static class NetTask2 extends AsyncTask<String, Integer, String> {
         // Global variables
         public final int RPiDeviceMainServerPort = 9000;
 
         /**
-         * This method will be used in order to request the main server on the device to turn off the live stream.
+         * This method will be used in order to request the main server on the device to take a picture during the live stream.
          * @param params the IP address of the raspberry pi device
          * @return null since nothing else is needed
          */
         @Override
         protected String doInBackground(String[] params) {
-            Log.e("HERE2", params[0]);
             try {
                 // set local variables
                 Socket socket=new Socket(params[0],RPiDeviceMainServerPort);
@@ -171,6 +227,106 @@ public class LiveViewPage extends AppCompatActivity {
                 e.printStackTrace();
             }
             return null;
-        } // ends the doInBackground(0 method
-    } // ends the NetTask class
+        } // ends the doInBackground() method
+    } // ends the NetTask2 class
+
+    /**
+     * This is the NetTask class that will be used to request the raspberry pi device to send over the picture
+     * that was taken during the live stream.
+     */
+    public class NetTask3 extends AsyncTask<String, Integer, String> {
+        // Global variables
+        public final int RPiDeviceMainServerPort = 9000;
+
+        /**
+         * This method will be used in order to request the main server on the device to send over the picture
+         * taken during the live stream.
+         * @param params the IP address of the raspberry pi device
+         * @return null since nothing else is needed
+         */
+        @Override
+        protected String doInBackground(String[] params) {
+
+            Context context = getApplicationContext();
+
+            try {
+                // set local variables
+                Socket socket=new Socket(params[0],RPiDeviceMainServerPort);
+                DataOutputStream dout=new DataOutputStream(socket.getOutputStream());
+                DataInputStream din=new DataInputStream(socket.getInputStream());
+
+                // tell the server to end the live
+                dout.writeUTF("Send Pics");
+                dout.flush();
+
+                // server responds : number of pics
+                String numberOfPics = din.readUTF();
+                Log.e("NUM PICS",numberOfPics);
+
+                // say OK
+                dout.writeUTF("OK");
+                dout.flush();
+
+                // now server will send those pics here
+                int num = Integer.parseInt(numberOfPics);
+                for (int i = 1 ; i <= num ; ++i) {
+                    // get the name of the pic and create file
+                    String picName = din.readUTF();
+                    Log.e("PIC NAME",picName);
+
+                    // say OK
+                    dout.writeUTF("OK");
+                    dout.flush();
+
+                    // get the size of the file
+                     String picSize = din.readUTF();
+                     Log.e("PIC SIZE",picSize);
+
+                    // say OK
+                    dout.writeUTF("OK");
+                    dout.flush();
+
+                    // get new pic file ready
+
+                    File dir = context.getDir("USER", Context.MODE_PRIVATE); //Creating an internal dir;
+                    File file = new File(dir, picName); //Getting a file within the dir.
+                    FileOutputStream filePtr = new FileOutputStream(file);
+
+
+                    //File file = new File(context.getFilesDir(), picName);
+                    Log.e("fileMade","" + file.getName());
+                    Log.e("pathOfFile","" + file.getAbsolutePath());
+                    //FileOutputStream filePtr = openFileOutput(file.getName() , Context.MODE_PRIVATE);
+
+                    // copy the bytes to buffer
+                    int count;
+                    int fileSize = Integer.parseInt(picSize);
+                    byte[] buffer = new byte[4096]; // or 4096, or more
+                    while ((count = din.read(buffer)) > 0)
+                    {
+                        fileSize -= count;
+                        if (fileSize <= 0) {
+                            break;
+                        }
+                        filePtr.write(buffer, 0, count);
+                    } // ends the while-loop
+
+                    // write the bytes into the file and the CLOSE it
+                    filePtr.close();
+
+                } // ends the for-loop
+
+                // server sends last OK
+                din.readUTF();
+
+                // close all
+                dout.close();
+                din.close();
+                socket.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return null;
+        } // ends the doInBackground() method
+    } // ends the NetTask3 class
 } // ends the LiveViewPage class
