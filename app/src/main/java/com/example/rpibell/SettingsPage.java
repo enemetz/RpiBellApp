@@ -27,6 +27,7 @@ public class SettingsPage extends AppCompatActivity {
     public String userName;             // current user
     public String IP;                   // IP address of the user's Raspberry Pi device
     public Button back;                 // back button on the page
+    public String token;                // user's current token
 
     /**
      * This method will be used in order to set up the Settings Page.
@@ -47,6 +48,9 @@ public class SettingsPage extends AppCompatActivity {
         // save the username
         userName = getIntent().getExtras().getString("user");
 
+        // save the user's token
+        token = getIntent().getExtras().getString("token");
+
         // once the back button is pressed, request the raspberry pi to end the live stream and then take the user back to the homepage
         back = this.<Button>findViewById(R.id.backFromSettingsToHome);
         back.setOnClickListener(view -> {
@@ -55,6 +59,7 @@ public class SettingsPage extends AppCompatActivity {
                 Intent intent = new Intent(SettingsPage.this, UserHomePage.class);
                 intent.putExtra("user", userName);
                 intent.putExtra("IP",IP);
+                intent.putExtra("token", token);
                 startActivity(intent);
                 finish();
             } catch (Exception e1) {

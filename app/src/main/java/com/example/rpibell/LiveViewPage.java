@@ -50,6 +50,7 @@ public class LiveViewPage extends AppCompatActivity {
     public WebView liveCam;                         // web viewer on the page
     public String userName;                         // username that needs to be passed between all pages
     public String IP;                               // IP address of the raspberry pi device playing live stream
+    public String token;                            // user's current token
     public final int liveStreamPort = 5000;         // specific port that the raspberry pi is using for the live stream
 
     /**
@@ -67,6 +68,7 @@ public class LiveViewPage extends AppCompatActivity {
         // get username to get back to user page
         userName = getIntent().getExtras().getString("user");
         IP = getIntent().getExtras().getString("IP");
+        token = getIntent().getExtras().getString("token");
 
         // set up the webView
         liveCam = (WebView) findViewById(R.id.webview);
@@ -89,6 +91,7 @@ public class LiveViewPage extends AppCompatActivity {
                 Intent intent = new Intent(LiveViewPage.this, UserHomePage.class);
                 intent.putExtra("user", userName);
                 intent.putExtra("IP",IP);
+                intent.putExtra("token", token);
                 startActivity(intent);
                 finish();
             } catch (Exception e1) {
@@ -111,7 +114,8 @@ public class LiveViewPage extends AppCompatActivity {
                 //Log.e("status","before 3");
 
                 verifyStoragePermissions(this);
-                new NetTask3().execute(IP); // here tell, send over the picture taken
+                String[] args = {IP,userName};
+                new NetTask3().execute(args); // here tell, send over the picture taken
 
                 //Log.e("status","after 3");
             } catch (Exception e1) {
@@ -288,7 +292,7 @@ public class LiveViewPage extends AppCompatActivity {
 
                     // get new pic file ready
 
-                    File dir = context.getDir("USER", Context.MODE_PRIVATE); //Creating an internal dir;
+                    File dir = context.getDir(params[1], Context.MODE_PRIVATE); //Creating an internal dir;
                     File file = new File(dir, picName); //Getting a file within the dir.
                     FileOutputStream filePtr = new FileOutputStream(file);
 
@@ -310,9 +314,13 @@ public class LiveViewPage extends AppCompatActivity {
                         }
                         filePtr.write(buffer, 0, count);
                     } // ends the while-loop
-
+                    Log.e("status","File received");
                     // write the bytes into the file and the CLOSE it
                     filePtr.close();
+
+                    // say OK
+                    dout.writeUTF("OK");
+                    dout.flush();
 
                 } // ends the for-loop
 
