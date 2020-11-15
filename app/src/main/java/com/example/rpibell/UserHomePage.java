@@ -51,32 +51,45 @@ public class UserHomePage extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.user_page);
 
+
+
         // disable the back button
         getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+
+
 
         // set the welcome bar at the top of the page to greet the user with their username
         welcomeBanner = findViewById(R.id.UserPageWelcomeTitle);
         userName = getIntent().getExtras().getString("user");
         welcomeBanner.append("Welcome, " + userName);
 
+
+
         // set/save the IP address of the user's Raspberry Pi device
         IP = getIntent().getExtras().getString("IP");
 
+
+
         // get the token
         token = getIntent().getExtras().getString("token");
+
+
 
         // ask RPi device to send any new pictures (usually the case once detection has occurred)
         String[] args = {IP,userName};
         new NetTask3().execute(args);
 
-        // go through settings.txt for this user and make appropriate changes (for now ... check if RPi Doorbell was armed or not)
+
+
+        // go through Camera.txt and check if RPi Doorbell was armed or not
         String beenArmed = null;
         try {
             beenArmed = new NetTask4().execute(userName).get();
-            Log.e("Settings.txt Text",beenArmed);
+            Log.e("Camera.txt Text",beenArmed);
         } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
         }
@@ -84,6 +97,8 @@ public class UserHomePage extends AppCompatActivity {
             armDeviceSwitch = findViewById(R.id.armDisarmSwitch);
             armDeviceSwitch.setChecked(true);
         }
+
+
 
         // once the Live View Button is pressed, the server must be notified to turn the live stream on
         liveView = findViewById(R.id.goToLiveViewButton);
@@ -109,6 +124,8 @@ public class UserHomePage extends AppCompatActivity {
         });
 
 
+
+
         // once the Settings Button is pressed, go to the settings page
         settings = findViewById(R.id.SettingsButton);
         settings.setOnClickListener(view -> {
@@ -120,6 +137,9 @@ public class UserHomePage extends AppCompatActivity {
             finish();
         });
 
+
+
+
         // once the Log Out button is pressed, go back to the log in page
         logOut = findViewById(R.id.logOutButton);
         logOut.setOnClickListener(view -> {
@@ -127,6 +147,10 @@ public class UserHomePage extends AppCompatActivity {
             startActivity(intent);
             finish();
         });
+
+
+
+
 
         // once the switch is turned on, the RPi Device must try to detect for motion and send notifications (if the user wants that)
         armDeviceSwitch = findViewById(R.id.armDisarmSwitch);
@@ -142,6 +166,7 @@ public class UserHomePage extends AppCompatActivity {
                 new NetTask6().execute(userName);
             }
         });
+
 
     } // ends the onCreate() method
 
@@ -266,6 +291,7 @@ public class UserHomePage extends AppCompatActivity {
 
 
 
+
     /**
      * This is the NetTask class that will be used to request the raspberry pi device to send over the picture
      * that was taken during the live stream.
@@ -371,8 +397,10 @@ public class UserHomePage extends AppCompatActivity {
     } // ends the NetTask3 class
 
 
+
+
     /**
-     * This is the NetTask class that will be used to check the user's settings.txt to see if the device has been armed already or not.
+     * This is the NetTask class that will be used to check the user's Camera.txt to see if the device has been armed already or not.
      */
     public class NetTask4 extends AsyncTask<String, Integer, String> {
 
@@ -387,12 +415,12 @@ public class UserHomePage extends AppCompatActivity {
 
             // get to the settings page
             File dir = context.getDir(params[0], Context.MODE_PRIVATE);
-            File file = new File(dir, "settings.txt");
+            File file = new File(dir, "Camera.txt");
 
             boolean exists = file.exists();
             // read from file
             if (exists == true) {
-                Log.e("settings.txt status","exist");
+                Log.e("Camera.txt status","exist");
                 StringBuilder text = new StringBuilder();
                 try {
                     BufferedReader br = new BufferedReader(new FileReader(file));
@@ -404,7 +432,7 @@ public class UserHomePage extends AppCompatActivity {
                 } catch (IOException e) { e.printStackTrace(); }
                 return text.toString();
             } else {    // user doesn't have file in there, need to create new one and mark it unarmed
-                Log.e("settings.txt status","doesn't exist");
+                Log.e("Camera.txt status","doesn't exist");
                 FileWriter writer = null;
                 try {
                     writer = new FileWriter(file);
@@ -421,8 +449,10 @@ public class UserHomePage extends AppCompatActivity {
 
 
 
+
+
     /**
-     * This is the NetTask class that will be used to check the user's settings.txt to see if the device has been armed already or not.
+     * This is the NetTask class that will be used to check the user's Camera.txt to see if the device has been armed already or not.
      */
     public class NetTask5 extends AsyncTask<String, Integer, String> {
 
@@ -437,13 +467,13 @@ public class UserHomePage extends AppCompatActivity {
 
             // get to the settings page
             File dir = context.getDir(params[0], Context.MODE_PRIVATE);
-            File file = new File(dir, "settings.txt");
+            File file = new File(dir, "Camera.txt");
 
             boolean exists = file.exists();
             // read from file
             if (exists == true) {
                 file.delete();
-                File newFile = new File(dir, "settings.txt");
+                File newFile = new File(dir, "Camera.txt");
                 FileWriter writer = null;
                 try {
                     writer = new FileWriter(newFile);
@@ -470,8 +500,10 @@ public class UserHomePage extends AppCompatActivity {
     } // ends the NetTask5 class
 
 
+
+
     /**
-     * This is the NetTask class that will be used to check the user's settings.txt to see if the device has been armed already or not.
+     * This is the NetTask class that will be used to check the user's Camera.txt to see if the device has been armed already or not.
      */
     public class NetTask6 extends AsyncTask<String, Integer, String> {
 
@@ -486,13 +518,13 @@ public class UserHomePage extends AppCompatActivity {
 
             // get to the settings page
             File dir = context.getDir(params[0], Context.MODE_PRIVATE);
-            File file = new File(dir, "settings.txt");
+            File file = new File(dir, "Camera.txt");
 
             boolean exists = file.exists();
             // read from file
             if (exists == true) {
                 file.delete();
-                File newFile = new File(dir, "settings.txt");
+                File newFile = new File(dir, "Camera.txt");
                 FileWriter writer = null;
                 try {
                     writer = new FileWriter(newFile);

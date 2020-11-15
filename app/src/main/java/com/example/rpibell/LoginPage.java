@@ -1,5 +1,6 @@
 package com.example.rpibell;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -32,7 +33,7 @@ public class LoginPage extends AppCompatActivity {
     public TextView passwordInput;      // password input field
     public String IP;                   // the IP address of the Raspberry Pi device  to connect to
     public String token;                // token for the current connection
-    String username;
+    public String username;
 
     /**
      * This method will be used in order to set up the Login Page once user clicks on the app.
@@ -84,18 +85,29 @@ public class LoginPage extends AppCompatActivity {
                                 token = task.getResult();
                                 Log.e("Registration Token", token);
                                 try {
-                                    // send the RPi device the username and token
-                                    String username = userNameInput.getText().toString();
-                                    String[] args = {IP,username,token};
-                                    new NetTask2().execute(args).get();
-
-                                    // go to the next screen (home screen) ; bring hidden variables along to use for later functions
-                                    Intent intent = new Intent(LoginPage.this, UserHomePage.class);
-                                    intent.putExtra("user", username);
-                                    intent.putExtra("IP",IP);
-                                    intent.putExtra("token", token);
-                                    startActivity(intent);
-                                    finish();
+                                    username = userNameInput.getText().toString();
+                                    // check the Notification.txt to see if the user wants notifications or not
+                                    String wantNotif = new NetTask3().execute(username).get();
+                                    if (wantNotif.equals("YES")) {
+                                        // send the RPi device the username and token
+                                        String[] args = {IP,username,token};
+                                        new NetTask2().execute(args).get();
+                                        // go to the next screen (home screen) ; bring hidden variables along to use for later functions
+                                        Intent intent = new Intent(LoginPage.this, UserHomePage.class);
+                                        intent.putExtra("user", username);
+                                        intent.putExtra("IP",IP);
+                                        intent.putExtra("token", token);
+                                        startActivity(intent);
+                                        finish();
+                                    } else {
+                                        // go to the next screen (home screen) ; bring hidden variables along to use for later functions
+                                        Intent intent = new Intent(LoginPage.this, UserHomePage.class);
+                                        intent.putExtra("user", username);
+                                        intent.putExtra("IP",IP);
+                                        intent.putExtra("token", token);
+                                        startActivity(intent);
+                                        finish();
+                                    }
                                 } catch (Exception e2) {
                                     e2.printStackTrace();
                                 }
@@ -133,6 +145,8 @@ public class LoginPage extends AppCompatActivity {
             return addr.getHostAddress();
         } // ends the doInBackground() method
     } // ends the NetTask class
+
+
 
     /**
      * This is the NetTask class that will be used to send the RPi device the current username and token.
@@ -187,4 +201,55 @@ public class LoginPage extends AppCompatActivity {
             return null;
         } // ends the doInBackground() method
     } // ends the NetTask2 class
+
+
+
+    /**
+     * This is the NetTask class that will be used to check the user's Notification.txt to see if
+     * they set notifications on or off.
+     */
+    public class NetTask3 extends AsyncTask<String, Integer, String> {
+
+        /**
+         * This method will check the Notifications.txt.
+         * @param params username
+         * @return armed or disarmed
+         */
+        @Override
+        protected String doInBackground(String[] params) {
+            Context context = getApplicationContext();
+
+            // get to the settings page
+            File dir = context.getDir(params[0], Context.MODE_PRIVATE);
+            File file = new File(dir, "Notification.txt");
+
+            boolean exists = file.exists();
+            // read from file
+            if (exists == true) {
+                Log.e("Notification.txt status","exist");
+                StringBuilder text = new StringBuilder();
+                try {
+                    BufferedReader br = new BufferedReader(new FileReader(file));
+                    String line;
+                    while ((line = br.readLine()) != null) {
+                        text.append(line);
+                    }
+                    br.close();
+                } catch (IOException e) { e.printStackTrace(); }
+                return text.toString();
+            } else {    // user doesn't have file in there, need to create new one and mark it unarmed
+                Log.e("Notification.txt status","doesn't exist");
+                FileWriter writer = null;
+                try {
+                    writer = new FileWriter(file);
+                    writer.append("YES");   // default; want notifications
+                    writer.flush();
+                    writer.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                return "YES";
+            }
+        } // ends the doInBackground() method
+    } // ends the NetTask3 class
 } // ends the LoginPage class
