@@ -39,6 +39,7 @@ public class UserHomePage extends AppCompatActivity {
     public Button liveView;                // live view button on the page
     public Button settings;                // settings button on the page
     public Button logOut;                  // log out button on the page
+    public Button mediaPage;               // button to bring user to media page to view pictures taken
     public Switch armDeviceSwitch;         // switch that is used to arm/disarm the RPi device
     public String IP;                      // IP address of the user's Raspberry Pi device
     public String token;                   // user's current token
@@ -167,6 +168,17 @@ public class UserHomePage extends AppCompatActivity {
             }
         });
 
+
+
+        mediaPage = findViewById(R.id.storedMediaButton);
+        mediaPage.setOnClickListener(view -> {
+            Intent intent = new Intent(UserHomePage.this, MediaPage.class);
+            intent.putExtra("user", userName);
+            intent.putExtra("IP",IP);
+            intent.putExtra("token", token);
+            startActivity(intent);
+            finish();
+        });
 
     } // ends the onCreate() method
 

@@ -13,4 +13,6 @@
     <string name="take_pic_button_text">TAKE PIC</string>
     <string name="armDeviceSwitchText">ARM/DISARM RPi DOORBELL</string>
     <string name="send_notifications_TEXT">SEND NOTIFICATIONS</string>
+    <string name="medaiButtonText">MEDIA</string>
+    <string name="mediapagebackbuttonText">mediaPageBackButton</string>
 </resources>
