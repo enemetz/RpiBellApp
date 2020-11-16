@@ -67,8 +67,10 @@ public class LoginPage extends AppCompatActivity {
                 // here the username and password from the user will be checked by the database
                 // the hostname of the RPI will be returned, which will be used in order to get the IP address
                 // for now, I am using my RPi's name directly (possible since the device is on the same wifi network)
-                IP = new NetTask().execute("czpi1.lan").get();
-
+                IP = new NetTask().execute("czpi1").get();
+                if (IP == null) {
+                    IP = new NetTask().execute("czpi1,lan").get();
+                }
                 if (IP == null) {
                     Toast.makeText(LoginPage.this,"PLEASE MAKE SURE RPi DEVICE IS CONNECTED TO SAME NETWORK ..." , Toast.LENGTH_LONG).show();
                 } else {
@@ -143,7 +145,7 @@ public class LoginPage extends AppCompatActivity {
                 e.printStackTrace();
             }
             if (addr == null) {
-                Log.e("status","here");
+                Log.e("Hostname IP","null");
                 return null;
             }
             return addr.getHostAddress();
