@@ -69,7 +69,7 @@ public class LoginPage extends AppCompatActivity {
                 // for now, I am using my RPi's name directly (possible since the device is on the same wifi network)
                 IP = new NetTask().execute("czpi1").get();
                 if (IP == null) {
-                    IP = new NetTask().execute("czpi1,lan").get();
+                    IP = new NetTask().execute("czpi1.lan").get();
                 }
                 if (IP == null) {
                     Toast.makeText(LoginPage.this,"PLEASE MAKE SURE RPi DEVICE IS CONNECTED TO SAME NETWORK ..." , Toast.LENGTH_LONG).show();
