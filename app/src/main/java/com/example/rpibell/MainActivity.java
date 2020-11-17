@@ -23,21 +23,15 @@ public class MainActivity extends AppCompatActivity {
         initializeViews();
 
         // Goes to sign-up page if "new user" button pressed
-        signupBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, SignUpPage.class);
-                startActivity(intent);
-            }
+        signupBtn.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, SignUpPage.class);
+            startActivity(intent);
         });
 
         // Goes to login page if "login" button pressed
-        loginBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, LoginPage.class);
-                startActivity(intent);
-            }
+        loginBtn.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, LoginPage.class);
+            startActivity(intent);
         });
     }
 

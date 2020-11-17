@@ -14,6 +14,8 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.firebase.auth.FirebaseAuth;
+
 import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -36,14 +38,18 @@ public class UserHomePage extends AppCompatActivity {
     // Global variables
     public TextView welcomeBanner;         // Text at top that will be used in order to greet the user
     public String userName;                // current user
+
     public Button liveView;                // live view button on the page
     public Button settings;                // settings button on the page
     public Button logOut;                  // log out button on the page
     public Button mediaPage;               // button to bring user to media page to view pictures taken
     public Switch armDeviceSwitch;         // switch that is used to arm/disarm the RPi device
+
     public String IP;                      // IP address of the user's Raspberry Pi device
     public String token;                   // user's current token
+
     public final int WAIT = 2000;          // amount of time to pause the app in order to give Raspberry Pi Camera time to warm up
+
 
     /**
      * This method will be used in order to set up the Home Page once user logs in.
@@ -139,11 +145,10 @@ public class UserHomePage extends AppCompatActivity {
         });
 
 
-
-
         // once the Log Out button is pressed, go back to the log in page
         logOut = findViewById(R.id.logOutButton);
         logOut.setOnClickListener(view -> {
+            FirebaseAuth.getInstance().signOut();
             Intent intent = new Intent(UserHomePage.this, LoginPage.class);
             startActivity(intent);
             finish();

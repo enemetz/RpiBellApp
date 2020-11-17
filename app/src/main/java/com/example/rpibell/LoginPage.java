@@ -4,36 +4,42 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.SystemClock;
 import android.util.Log;
 import android.widget.Button;
-import android.widget.TextView;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import java.net.*;
 import java.io.*;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.firebase.messaging.FirebaseMessaging;
-import com.google.android.gms.tasks.Task;
 
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.messaging.FirebaseMessaging;
+import com.google.firebase.auth.FirebaseAuth;
 
 /**
- * This is the LoginPage class. This is the first screen the user is greeted with.
- * Here a username and password must be given in order to access the rest of the application.
+ * This is the Login Page.
+ * Here an email and password must be given in order to access the rest of the application.
  */
 public class LoginPage extends AppCompatActivity {
+    // Global variables
     public static final String TAG = "MyFirebaseMsgService";
 
-    // Global variables
     public Button logIn;                // log in button
-    public TextView userNameInput;      // username input field
-    public TextView passwordInput;      // password input field
+
+    private EditText emailInput;        // user email
+    private EditText passwordInput;     // user password
+
     public String IP;                   // the IP address of the Raspberry Pi device  to connect to
     public String token;                // token for the current connection
-    public String username;
+    public String username;             // username used to greet the user
+
+    private FirebaseAuth mAuth;         // access the Firebase Authentication
+    private FirebaseFirestore db;       // access to the Firebase Firestore Database
 
     /**
      * This method will be used in order to set up the Login Page once user clicks on the app.
@@ -44,17 +50,21 @@ public class LoginPage extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login_page);
 
+        // connect to the Firebase Authentication
+        mAuth = FirebaseAuth.getInstance();
 
-        // obtain the username and password
-        // for now, it can be anything ; will need to be connected to the DB in the future
-        userNameInput = findViewById(R.id.UserNameInput);
-        passwordInput = findViewById(R.id.PasswordInput);
+        // connect to the Firebase Firestore
+        db = FirebaseFirestore.getInstance();
+
+        // obtain the typed username and password
+        emailInput = findViewById(R.id.userEmailInput);
+        passwordInput = findViewById(R.id.userPasswordInput);
+
+        // once the login in pressed, check the username and password with the Firebase Authentication
         logIn = findViewById(R.id.LogInButton);
-
-        // once the Login button is pressed, make sure that both the username and password were filled out
         logIn.setOnClickListener(view -> {
-            if (userNameInput.getText().toString().isEmpty()) {
-                Toast.makeText(LoginPage.this,"PLEASE ENTER A USERNAME" , Toast.LENGTH_LONG).show();
+            if (emailInput.getText().toString().isEmpty()) {
+                Toast.makeText(LoginPage.this,"PLEASE ENTER AN EMAIL" , Toast.LENGTH_LONG).show();
                 return;
             }
             if (passwordInput.getText().toString().isEmpty()) {
@@ -62,63 +72,168 @@ public class LoginPage extends AppCompatActivity {
                 return;
             }
 
-            try
-            {
-                // here the username and password from the user will be checked by the database
-                // the hostname of the RPI will be returned, which will be used in order to get the IP address
-                // for now, I am using my RPi's name directly (possible since the device is on the same wifi network)
-                IP = new NetTask().execute("czpi1").get();
-                if (IP == null) {
-                    IP = new NetTask().execute("czpi1.lan").get();
-                }
-                if (IP == null) {
-                    Toast.makeText(LoginPage.this,"PLEASE MAKE SURE RPi DEVICE IS CONNECTED TO SAME NETWORK ..." , Toast.LENGTH_LONG).show();
-                } else {
-                    // Gets current token
-                    FirebaseMessaging.getInstance().getToken()
-                            .addOnCompleteListener(task -> {
-                                if (!task.isSuccessful()) {
-                                    Log.w(TAG, "Fetching FCM registration token failed", task.getException());
-                                    token = null;
-                                    Toast.makeText(LoginPage.this,"TROUBLE CONNECTING TO FIREBASE, TRY AGAIN LATER ..." , Toast.LENGTH_LONG).show();
-                                    return;
-                                }
-                                // Get new FCM registration token
-                                token = task.getResult();
-                                Log.e("Registration Token", token);
-                                try {
-                                    username = userNameInput.getText().toString();
-                                    // check the Notification.txt to see if the user wants notifications or not
-                                    String wantNotif = new NetTask3().execute(username).get();
-                                    if (wantNotif.equals("YES")) {
-                                        // send the RPi device the username and token
-                                        String[] args = {IP,username,token};
-                                        new NetTask2().execute(args).get();
-                                        // go to the next screen (home screen) ; bring hidden variables along to use for later functions
-                                        Intent intent = new Intent(LoginPage.this, UserHomePage.class);
-                                        intent.putExtra("user", username);
-                                        intent.putExtra("IP",IP);
-                                        intent.putExtra("token", token);
-                                        startActivity(intent);
-                                        finish();
+            mAuth.signInWithEmailAndPassword(emailInput.getText().toString(), passwordInput.getText().toString())
+                    .addOnCompleteListener(this, task -> {
+                        if (task.isSuccessful()) {  // sign-in successful
+                            Log.d("Login Status", "signInWithEmail:success");
+                            // obtain the user's PiBell's Hostname
+                            FirebaseUser user = mAuth.getCurrentUser();
+                            Log.e("userID",user.getUid());
+
+                            // check all the saved admin users for the right account to get the PiBell hostname
+                            DocumentReference adminUsers = db.collection("admins").document(user.getUid());
+                            adminUsers.get().addOnCompleteListener(task1 -> {
+                                if (task1.isSuccessful()) {
+                                    DocumentSnapshot document = task1.getResult();
+                                    if (document.exists()) {
+                                        Log.d("Device Info Status", "SUCCESS");
+                                        String hostname = document.getString("hostname");
+                                        try
+                                        {
+                                            IP = new NetTask().execute(hostname).get();
+                                            if (IP == null) {
+                                                String newHostName = hostname + ".lan";
+                                                IP = new NetTask().execute(newHostName).get();
+                                            }
+                                            if (IP == null) {
+                                                Toast.makeText(LoginPage.this,"PLEASE MAKE SURE RPi DEVICE IS CONNECTED TO SAME NETWORK ..." , Toast.LENGTH_LONG).show();
+                                            } else {
+                                                // Gets current token
+                                                FirebaseMessaging.getInstance().getToken()
+                                                        .addOnCompleteListener(task2 -> {
+                                                            if (!task2.isSuccessful()) {
+                                                                Log.w(TAG, "Fetching FCM registration token failed", task2.getException());
+                                                                token = null;
+                                                                Toast.makeText(LoginPage.this,"TROUBLE CONNECTING TO FIREBASE, TRY AGAIN LATER ..." , Toast.LENGTH_LONG).show();
+                                                                return;
+                                                            }
+                                                            // Get new FCM registration token
+                                                            token = task2.getResult();
+                                                            Log.e("Registration Token", token);
+                                                            try {
+                                                                username = document.getString("name");
+                                                                // check the Notification.txt to see if the user wants notifications or not
+                                                                String wantNotif = new NetTask3().execute(username).get();
+                                                                if (wantNotif.equals("YES")) {
+                                                                    // send the RPi device the username and token
+                                                                    String[] args = {IP,username,token};
+                                                                    new NetTask2().execute(args).get();
+                                                                    // go to the next screen (home screen) ; bring hidden variables along to use for later functions
+                                                                    Toast.makeText(getApplicationContext(), "Login successful!", Toast.LENGTH_LONG).show();
+                                                                    Intent intent = new Intent(LoginPage.this, UserHomePage.class);
+                                                                    intent.putExtra("user", username);
+                                                                    intent.putExtra("IP",IP);
+                                                                    intent.putExtra("token", token);
+                                                                    startActivity(intent);
+                                                                    finish();
+                                                                } else {
+                                                                    // go to the next screen (home screen) ; bring hidden variables along to use for later functions
+                                                                    Toast.makeText(getApplicationContext(), "Login successful!", Toast.LENGTH_LONG).show();
+                                                                    Intent intent = new Intent(LoginPage.this, UserHomePage.class);
+                                                                    intent.putExtra("user", username);
+                                                                    intent.putExtra("IP",IP);
+                                                                    intent.putExtra("token", token);
+                                                                    startActivity(intent);
+                                                                    finish();
+                                                                }
+                                                            } catch (Exception e2) {
+                                                                e2.printStackTrace();
+                                                            }
+                                                        });
+
+                                            }
+                                        } catch (Exception e1) {
+                                            e1.printStackTrace();
+                                        }
                                     } else {
-                                        // go to the next screen (home screen) ; bring hidden variables along to use for later functions
-                                        Intent intent = new Intent(LoginPage.this, UserHomePage.class);
-                                        intent.putExtra("user", username);
-                                        intent.putExtra("IP",IP);
-                                        intent.putExtra("token", token);
-                                        startActivity(intent);
-                                        finish();
+                                        Log.d("Device Info Status", "ERROR");
+                                        Toast.makeText(getApplicationContext(), "ERROR OBTAINING DEVICE INFO", Toast.LENGTH_LONG).show();
+                                        return;
                                     }
-                                } catch (Exception e2) {
-                                    e2.printStackTrace();
                                 }
                             });
 
-                }
-            } catch (Exception e1) {
-                e1.printStackTrace();
-            }
+
+                            // check all the saved guest accounts for the PiBell's hostname
+                            DocumentReference guestUsers = db.collection("guests").document(user.getUid());
+                            guestUsers.get().addOnCompleteListener(task3 -> {
+                                if (task3.isSuccessful()) {
+                                    DocumentSnapshot document = task3.getResult();
+                                    if (document.exists()) {
+                                        Log.d("Device Info Status", "SUCCESS");
+                                        String hostname = document.getString("hostname");
+                                        try
+                                        {
+                                            IP = new NetTask().execute(hostname).get();
+                                            if (IP == null) {
+                                                String newHostName = hostname + ".lan";
+                                                IP = new NetTask().execute(newHostName).get();
+                                            }
+                                            if (IP == null) {
+                                                Toast.makeText(LoginPage.this,"PLEASE MAKE SURE RPi DEVICE IS CONNECTED TO SAME NETWORK ..." , Toast.LENGTH_LONG).show();
+                                            } else {
+                                                // Gets current token
+                                                FirebaseMessaging.getInstance().getToken()
+                                                        .addOnCompleteListener(task4 -> {
+                                                            if (!task4.isSuccessful()) {
+                                                                Log.w(TAG, "Fetching FCM registration token failed", task4.getException());
+                                                                token = null;
+                                                                Toast.makeText(LoginPage.this,"TROUBLE CONNECTING TO FIREBASE, TRY AGAIN LATER ..." , Toast.LENGTH_LONG).show();
+                                                                return;
+                                                            }
+                                                            // Get new FCM registration token
+                                                            token = task4.getResult();
+                                                            Log.e("Registration Token", token);
+                                                            try {
+                                                                username = document.getString("name");
+                                                                // check the Notification.txt to see if the user wants notifications or not
+                                                                String wantNotif = new NetTask3().execute(username).get();
+                                                                if (wantNotif.equals("YES")) {
+                                                                    // send the RPi device the username and token
+                                                                    String[] args = {IP,username,token};
+                                                                    new NetTask2().execute(args).get();
+                                                                    // go to the next screen (home screen) ; bring hidden variables along to use for later functions
+                                                                    Toast.makeText(getApplicationContext(), "Login successful!", Toast.LENGTH_LONG).show();
+                                                                    Intent intent = new Intent(LoginPage.this, UserHomePage.class);
+                                                                    intent.putExtra("user", username);
+                                                                    intent.putExtra("IP",IP);
+                                                                    intent.putExtra("token", token);
+                                                                    startActivity(intent);
+                                                                    finish();
+                                                                } else {
+                                                                    // go to the next screen (home screen) ; bring hidden variables along to use for later functions
+                                                                    Toast.makeText(getApplicationContext(), "Login successful!", Toast.LENGTH_LONG).show();
+                                                                    Intent intent = new Intent(LoginPage.this, UserHomePage.class);
+                                                                    intent.putExtra("user", username);
+                                                                    intent.putExtra("IP",IP);
+                                                                    intent.putExtra("token", token);
+                                                                    startActivity(intent);
+                                                                    finish();
+                                                                }
+                                                            } catch (Exception e2) {
+                                                                e2.printStackTrace();
+                                                            }
+                                                        });
+
+                                            }
+                                        } catch (Exception e1) {
+                                            e1.printStackTrace();
+                                        }
+                                    } else {
+                                        Log.d("Device Info Status", "ERROR");
+                                        Toast.makeText(getApplicationContext(), "ERROR OBTAINING DEVICE INFO", Toast.LENGTH_LONG).show();
+                                    }
+                                } else {
+                                    Log.d(TAG, "Failed with: ", task3.getException());
+                                    Toast.makeText(getApplicationContext(), "ERROR OBTAINING DEVICE INFO", Toast.LENGTH_LONG).show();
+                                }
+                            });
+                        } else {
+                            // sign-in failed
+                            Log.w("Login Status", "signInWithEmail:failure", task.getException());
+                            Toast.makeText(getApplicationContext(), "LOGIN FAILED! TRY AGAIN LATER", Toast.LENGTH_LONG).show();
+                        }
+                    });
         });
 
 
