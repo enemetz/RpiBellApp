@@ -126,6 +126,7 @@ public class LoginPage extends AppCompatActivity {
                                                                     intent.putExtra("token", token);
                                                                     startActivity(intent);
                                                                     finish();
+                                                                    return;
                                                                 } else {
                                                                     // go to the next screen (home screen) ; bring hidden variables along to use for later functions
                                                                     Toast.makeText(getApplicationContext(), "Login successful!", Toast.LENGTH_LONG).show();
@@ -135,6 +136,7 @@ public class LoginPage extends AppCompatActivity {
                                                                     intent.putExtra("token", token);
                                                                     startActivity(intent);
                                                                     finish();
+                                                                    return;
                                                                 }
                                                             } catch (Exception e2) {
                                                                 e2.printStackTrace();
@@ -200,6 +202,7 @@ public class LoginPage extends AppCompatActivity {
                                                                     intent.putExtra("token", token);
                                                                     startActivity(intent);
                                                                     finish();
+                                                                    return;
                                                                 } else {
                                                                     // go to the next screen (home screen) ; bring hidden variables along to use for later functions
                                                                     Toast.makeText(getApplicationContext(), "Login successful!", Toast.LENGTH_LONG).show();
@@ -209,6 +212,7 @@ public class LoginPage extends AppCompatActivity {
                                                                     intent.putExtra("token", token);
                                                                     startActivity(intent);
                                                                     finish();
+                                                                    return;
                                                                 }
                                                             } catch (Exception e2) {
                                                                 e2.printStackTrace();
@@ -219,13 +223,10 @@ public class LoginPage extends AppCompatActivity {
                                         } catch (Exception e1) {
                                             e1.printStackTrace();
                                         }
-                                    } else {
-                                        Log.d("Device Info Status", "ERROR");
-                                        Toast.makeText(getApplicationContext(), "ERROR OBTAINING DEVICE INFO", Toast.LENGTH_LONG).show();
                                     }
                                 } else {
                                     Log.d(TAG, "Failed with: ", task3.getException());
-                                    Toast.makeText(getApplicationContext(), "ERROR OBTAINING DEVICE INFO", Toast.LENGTH_LONG).show();
+                                    //Toast.makeText(getApplicationContext(), "ERROR OBTAINING DEVICE INFO", Toast.LENGTH_LONG).show();
                                 }
                             });
                         } else {

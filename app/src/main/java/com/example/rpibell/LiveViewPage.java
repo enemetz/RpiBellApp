@@ -104,20 +104,15 @@ public class LiveViewPage extends AppCompatActivity {
         picButton.setOnClickListener(view -> {
             try
             {
-                //Log.e("status","before 2");
                 new NetTask2().execute(IP); // here tell, the server to turn off the live stream
-                //Log.e("status","after 2");
                 Toast.makeText(LiveViewPage.this,"TAKING PICTURE..." , Toast.LENGTH_LONG).show();
                 SystemClock.sleep(3000);    // give the camera at least 3 seconds to warm up
-                //Log.e("status","after sleep / before loading");
                 liveCam.loadUrl(url);
-                //Log.e("status","before 3");
 
                 verifyStoragePermissions(this);
                 String[] args = {IP,userName};
                 new NetTask3().execute(args); // here tell, send over the picture taken
 
-                //Log.e("status","after 3");
             } catch (Exception e1) {
                 e1.printStackTrace();
             }
