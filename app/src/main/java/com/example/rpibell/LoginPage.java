@@ -96,7 +96,34 @@ public class LoginPage extends AppCompatActivity {
                                                 IP = new NetTask().execute(newHostName).get();
                                             }
                                             if (IP == null) {
-                                                Toast.makeText(LoginPage.this,"PLEASE MAKE SURE RPi DEVICE IS CONNECTED TO SAME NETWORK ..." , Toast.LENGTH_LONG).show();
+                                                Toast.makeText(LoginPage.this,"CANNOT FIND PiBELL. PLEASE CHECK THE HELP PAGE IN SETTINGS TO RESOLVE THE ISSUE." , Toast.LENGTH_LONG).show();
+                                                // Gets current token
+                                                FirebaseMessaging.getInstance().getToken()
+                                                        .addOnCompleteListener(task2 -> {
+                                                            if (!task2.isSuccessful()) {
+                                                                Log.w(TAG, "Fetching FCM registration token failed", task2.getException());
+                                                                token = null;
+                                                                Toast.makeText(LoginPage.this,"TROUBLE CONNECTING TO FIREBASE, TRY AGAIN LATER ..." , Toast.LENGTH_LONG).show();
+                                                                return;
+                                                            }
+                                                            // Get new FCM registration token
+                                                            token = task2.getResult();
+                                                            Log.e("Registration Token", token);
+                                                            try {
+                                                                Log.e("Special Status", "Cannot get IP Address, bring to homepage to resolve");
+                                                                username = document.getString("name");
+                                                                //Toast.makeText(getApplicationContext(), "Login successful!", Toast.LENGTH_LONG).show();
+                                                                Intent intent = new Intent(LoginPage.this, UserHomePage.class);
+                                                                intent.putExtra("user", username);
+                                                                intent.putExtra("IP",IP);
+                                                                intent.putExtra("token", token);
+                                                                startActivity(intent);
+                                                                finish();
+                                                                return;
+                                                            } catch (Exception e2) {
+                                                                e2.printStackTrace();
+                                                            }
+                                                        });
                                             } else {
                                                 // Gets current token
                                                 FirebaseMessaging.getInstance().getToken()
