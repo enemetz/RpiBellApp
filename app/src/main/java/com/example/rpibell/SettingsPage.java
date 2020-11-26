@@ -2,6 +2,7 @@ package com.example.rpibell;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.SystemClock;
@@ -46,7 +47,6 @@ public class SettingsPage extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
-        super.onCreate(savedInstanceState);
         setContentView(R.layout.settings_page);
 
         // disable the back button

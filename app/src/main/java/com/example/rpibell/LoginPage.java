@@ -12,8 +12,11 @@ import android.widget.Toast;
 import java.net.*;
 import java.io.*;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -29,7 +32,8 @@ public class LoginPage extends AppCompatActivity {
     // Global variables
     public static final String TAG = "MyFirebaseMsgService";
 
-    public Button logIn;                // log in button
+    public Button logIn;// log in button
+    public Button resetPass;
 
     private EditText emailInput;        // user email
     private EditText passwordInput;     // user password
@@ -59,6 +63,7 @@ public class LoginPage extends AppCompatActivity {
         // obtain the typed username and password
         emailInput = findViewById(R.id.userEmailInput);
         passwordInput = findViewById(R.id.userPasswordInput);
+
 
         // once the login in pressed, check the username and password with the Firebase Authentication
         logIn = findViewById(R.id.LogInButton);
@@ -264,6 +269,20 @@ public class LoginPage extends AppCompatActivity {
                     });
         });
 
+        //Code for resetting password
+        resetPass = findViewById(R.id.passwordResetButton);
+        resetPass.setOnClickListener(view -> {
+            mAuth.sendPasswordResetEmail(emailInput.getText().toString())
+                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if(task.isSuccessful()) {
+                                Toast.makeText(getApplicationContext(), "Password reset email sent.", Toast.LENGTH_LONG).show();
+                                Log.d(TAG, "Email sent");
+                            }
+                        }
+            });
+        });
 
     } // ends the onCreate() method
 
