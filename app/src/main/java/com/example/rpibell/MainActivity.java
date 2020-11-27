@@ -13,7 +13,8 @@ import androidx.appcompat.app.AppCompatActivity;
  */
 public class MainActivity extends AppCompatActivity {
 
-    Button loginBtn, signupBtn;
+    Button loginBtn, signupBtn, tmpButton;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,6 +28,7 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(MainActivity.this, SignUpPage.class);
             startActivity(intent);
         });
+
 
         // Goes to login page if "login" button pressed
         loginBtn.setOnClickListener(v -> {

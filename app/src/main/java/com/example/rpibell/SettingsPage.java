@@ -1,18 +1,28 @@
 package com.example.rpibell;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.SystemClock;
+import android.text.InputType;
 import android.util.Log;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import java.io.BufferedReader;
 import java.io.DataInputStream;
@@ -38,6 +48,7 @@ public class SettingsPage extends AppCompatActivity {
     public String token;                    // user's current token
 
     public Button back;                     // back button on the page
+    public Button resetEmail;
     public ToggleButton setNotification;    // toggle button to set notifications on or off
 
     /**
@@ -47,6 +58,7 @@ public class SettingsPage extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
+        super.onCreate(savedInstanceState);
         setContentView(R.layout.settings_page);
 
         // disable the back button
@@ -61,14 +73,48 @@ public class SettingsPage extends AppCompatActivity {
         // save the user's token
         token = getIntent().getExtras().getString("token");
 
+        //Gets the current user
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+        resetEmail = findViewById(R.id.ChangeEmailButton);
+        resetEmail.setOnClickListener(view -> {
+            // Creates an alert to get text from the user to change their email
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("Change email").setMessage("What would you like to change your email to?");
+
+            // Text field to add to the alert dialog
+            final EditText input = new EditText(this);
+            input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
+            builder.setView(input);
+            builder.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                            // Continue with delete operation
+                    user.updateEmail(input.getText().toString())
+                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (task.isSuccessful()) {
+                                Toast.makeText(getApplicationContext(), "Email updated", Toast.LENGTH_LONG).show();
+                            }
+                        }
+                    });
+                        }
+            });
+
+                    // A null listener allows the button to dismiss the dialog and take no further action.
+                    builder.setNegativeButton(android.R.string.no, null);
+
+                    builder.show();
+        });
+
+
         // once the back button is pressed, request the raspberry pi to end the live stream and then take the user back to the homepage
         back = this.<Button>findViewById(R.id.backFromSettingsToHome);
         back.setOnClickListener(view -> {
-            try
-            {
+            try {
                 Intent intent = new Intent(SettingsPage.this, UserHomePage.class);
                 intent.putExtra("user", userName);
-                intent.putExtra("IP",IP);
+                intent.putExtra("IP", IP);
                 intent.putExtra("token", token);
                 startActivity(intent);
                 finish();
@@ -81,7 +127,7 @@ public class SettingsPage extends AppCompatActivity {
         String getNotif = null;
         try {
             getNotif = new NetTask().execute(userName).get();
-            Log.e("Notification.txt Text",getNotif);
+            Log.e("Notification.txt Text", getNotif);
         } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
         }
@@ -94,15 +140,14 @@ public class SettingsPage extends AppCompatActivity {
         // once the switch is turned on, the RPi Device must try to detect for motion and send notifications (if the user wants that)
         setNotification = findViewById(R.id.notificationToggleButton);
         setNotification.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            if(isChecked){
+            if (isChecked) {
                 Toast.makeText(getApplicationContext(), "NOTIFICATIONS ON", Toast.LENGTH_SHORT).show();
-                String[] params = {IP,userName,token};
+                String[] params = {IP, userName, token};
                 new NetTask3().execute(params);
                 new NetTask4().execute(userName);
-            }
-            else {
+            } else {
                 Toast.makeText(getApplicationContext(), "NOTIFICATIONS OFF", Toast.LENGTH_SHORT).show();
-                String[] params = {IP,userName};
+                String[] params = {IP, userName};
                 new NetTask1().execute(params);
                 new NetTask2().execute(userName);
             }

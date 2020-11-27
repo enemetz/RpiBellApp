@@ -64,6 +64,11 @@
             android:parentActivityName=".UserHomePage">
         </activity>
 
+        <activity android:name=".SplashScreenPage"
+            android:label="Splash page"
+            android:parentActivityName=".MainActivity">
+        </activity>
+
 
     </application>
 
