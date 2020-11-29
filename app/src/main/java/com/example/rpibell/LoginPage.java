@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.net.*;
@@ -33,7 +34,7 @@ public class LoginPage extends AppCompatActivity {
     public static final String TAG = "MyFirebaseMsgService";
 
     public Button logIn;// log in button
-    public Button resetPass;
+    public TextView resetPass;
 
     private EditText emailInput;        // user email
     private EditText passwordInput;     // user password
@@ -334,7 +335,9 @@ public class LoginPage extends AppCompatActivity {
                 //Log.e("username", params[1]);
                 //Log.e("token", params[2]);
                 // set local variables
-                Socket socket=new Socket(params[0],RPiDeviceMainServerPort);
+                //Socket socket=new Socket(params[0],RPiDeviceMainServerPort);
+                Socket socket = new Socket();
+                socket.connect(new InetSocketAddress(params[0], RPiDeviceMainServerPort), 1000);
                 DataOutputStream dout=new DataOutputStream(socket.getOutputStream());
                 DataInputStream din=new DataInputStream(socket.getInputStream());
 

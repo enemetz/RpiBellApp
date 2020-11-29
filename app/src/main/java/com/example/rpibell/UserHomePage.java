@@ -107,6 +107,8 @@ public class UserHomePage extends AppCompatActivity {
 
 
 
+
+
         // once the Live View Button is pressed, the server must be notified to turn the live stream on
         liveView = findViewById(R.id.goToLiveViewButton);
         liveView.setOnClickListener(view -> {

@@ -69,6 +69,17 @@
             android:parentActivityName=".MainActivity">
         </activity>
 
+        <activity android:name=".GuestSettingsPage"
+            android:label="Guest settings"
+            android:parentActivityName=".MainActivity">
+        </activity>
+
+        <activity android:name=".GuestHomePage"
+            android:label="Guest home page"
+            android:parentActivityName=".UserHomePage">
+
+        </activity>
+
 
     </application>
 

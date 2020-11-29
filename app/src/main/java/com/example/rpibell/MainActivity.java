@@ -13,7 +13,7 @@ import androidx.appcompat.app.AppCompatActivity;
  */
 public class MainActivity extends AppCompatActivity {
 
-    Button loginBtn, signupBtn, tmpButton;
+    Button loginBtn, signupBtn;
 
 
     @Override
@@ -35,6 +35,7 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(MainActivity.this, LoginPage.class);
             startActivity(intent);
         });
+
     }
 
     /**
@@ -43,5 +44,6 @@ public class MainActivity extends AppCompatActivity {
     private void initializeViews() {
         signupBtn = findViewById(R.id.btnSignUp);
         loginBtn = findViewById(R.id.btnLogin);
+
     }
 }
