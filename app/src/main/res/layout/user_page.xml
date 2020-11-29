@@ -20,62 +20,84 @@
 
     <Button
         android:id="@+id/goToLiveViewButton"
-        android:layout_width="134dp"
-        android:layout_height="40dp"
+        android:layout_width="174dp"
+        android:layout_height="47dp"
         android:text="@string/live_view_button_text"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.516"
+        app:layout_constraintHorizontal_bias="0.527"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.191" />
+        app:layout_constraintVertical_bias="0.299" />
 
     <Button
         android:id="@+id/SettingsButton"
-        android:layout_width="134dp"
-        android:layout_height="40dp"
+        android:layout_width="174dp"
+        android:layout_height="47dp"
         android:text="@string/settings"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.516"
+        app:layout_constraintHorizontal_bias="0.494"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.611" />
+        app:layout_constraintVertical_bias="0.71" />
 
     <Button
         android:id="@+id/logOutButton"
-        android:layout_width="137dp"
-        android:layout_height="42dp"
+        android:layout_width="174dp"
+        android:layout_height="47dp"
         android:text="@string/log_out_button_Text"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.511"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.767" />
+        app:layout_constraintVertical_bias="0.82" />
 
     <Switch
         android:id="@+id/armDisarmSwitch"
-        android:layout_width="161dp"
-        android:layout_height="49dp"
+        android:layout_width="189dp"
+        android:layout_height="55dp"
         android:text="@string/armDeviceSwitchText"
         android:textAlignment="center"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.339" />
+        app:layout_constraintVertical_bias="0.163" />
 
     <Button
         android:id="@+id/storedMediaButton"
-        android:layout_width="134dp"
-        android:layout_height="40dp"
+        android:layout_width="174dp"
+        android:layout_height="47dp"
         android:text="@string/medaiButtonText"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.516"
+        app:layout_constraintHorizontal_bias="0.067"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.479" />
+        app:layout_constraintVertical_bias="0.429" />
+
+    <Button
+        android:id="@+id/notificationsButton"
+        android:layout_width="174dp"
+        android:layout_height="47dp"
+        android:text="@string/notifications_button_text"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.932"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.428" />
+
+    <Button
+        android:id="@+id/manageGuests"
+        android:layout_width="174dp"
+        android:layout_height="47dp"
+        android:text="@string/manage_guests"
+        app:layout_constraintBottom_toTopOf="@+id/SettingsButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/storedMediaButton"
+        app:layout_constraintVertical_bias="0.543" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

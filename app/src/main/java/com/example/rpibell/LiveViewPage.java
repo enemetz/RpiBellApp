@@ -32,6 +32,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 
@@ -52,6 +53,8 @@ public class LiveViewPage extends AppCompatActivity {
     public String IP;                               // IP address of the raspberry pi device playing live stream
     public String token;                            // user's current token
     public final int liveStreamPort = 5000;         // specific port that the raspberry pi is using for the live stream
+    public String email;
+    public String password;
 
     /**
      * This method will be used in order to set up the Live View Page.
@@ -62,13 +65,12 @@ public class LiveViewPage extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.live_stream_page);
 
-        // disable the back button
-        getSupportActionBar().setDisplayHomeAsUpEnabled(false);
-
         // get username to get back to user page
         userName = getIntent().getExtras().getString("user");
         IP = getIntent().getExtras().getString("IP");
         token = getIntent().getExtras().getString("token");
+        email = getIntent().getExtras().getString("email");
+        password = getIntent().getExtras().getString("password");
 
         // set up the webView
         liveCam = (WebView) findViewById(R.id.webview);
@@ -92,9 +94,12 @@ public class LiveViewPage extends AppCompatActivity {
                 intent.putExtra("user", userName);
                 intent.putExtra("IP",IP);
                 intent.putExtra("token", token);
+                intent.putExtra("email",email);
+                intent.putExtra("password",password);
                 startActivity(intent);
                 finish();
             } catch (Exception e1) {
+                //Toast.makeText(this,"HERE",Toast.LENGTH_LONG).show();
                 e1.printStackTrace();
             }
         });
@@ -167,7 +172,8 @@ public class LiveViewPage extends AppCompatActivity {
         protected String doInBackground(String[] params) {
             try {
                 // set local variables
-                Socket socket=new Socket(params[0],RPiDeviceMainServerPort);
+                Socket socket = new Socket();
+                socket.connect(new InetSocketAddress(params[0],RPiDeviceMainServerPort),2000);
                 DataOutputStream dout=new DataOutputStream(socket.getOutputStream());
                 DataInputStream din=new DataInputStream(socket.getInputStream());
 

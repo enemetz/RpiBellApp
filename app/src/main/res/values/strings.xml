@@ -16,9 +16,47 @@
     <string name="medaiButtonText">MEDIA</string>
     <string name="mediapagebackbuttonText">mediaPageBackButton</string>
     <string name="sign_up_button_text">SIGN UP</string>
-    <string name="pibell_sign_up_title_text">PiBell Sign-Up</string>
+    <string name="pibell_sign_up_title_text">PiBell Admin Sign-Up</string>
     <string name="rpi_device_hostname_signup_page_hint">RPi Device Hostname</string>
     <string name="email_address_sign_up_page_hint">Email (EX: user@domain.com)</string>
     <string name="name_sign_up_page_hint">Name</string>
     <string name="password_sign_up_page_hint">Password (At least 6 characters)</string>
+    <string name="clear_pics_button_text">CLEAR</string>
+    <string name="media_page_title_text">MEDIA</string>
+    <string name="notifications_page_title_text">NOTIFICATIONS</string>
+    <string name="notifications_button_text">NOTIFICATIONS</string>
+    <string name="picture_capture_text">PICTURE CAPTURE</string>
+
+    <string name="manage_guests">CURRENT GUESTS</string>
+    <string name="title_activity_settings">SettingsActivity</string>
+
+    <!-- Preference Titles -->
+    <string name="messages_header">Messages</string>
+    <string name="sync_header">Sync</string>
+
+    <!-- Messages Preferences -->
+    <string name="signature_title">Your signature</string>
+    <string name="reply_title">Default reply action</string>
+
+    <!-- Sync Preferences -->
+    <string name="sync_title">Sync email periodically</string>
+    <string name="attachment_title">Download incoming attachments</string>
+    <string name="attachment_summary_on">Automatically download attachments for incoming emails
+    </string>
+    <string name="attachment_summary_off">Only download attachments when manually requested</string>
+    <string name="add_a_guest">Add a Guest</string>
+    <string name="add_guest">ADD GUEST</string>
+    <string name="todo">TODO</string>
+    <string name="admin_info_button_text">ADMIN INFO</string>
+    <string name="admin_info_page_title">ADMIN INFO</string>
+    <string name="admin_id_label_text">Admin ID:</string>
+    <string name="hostname_label">Hostname:</string>
+    <string name="todo2">TODO2</string>
+    <string name="choose_new_account_type_title">CHOOSE NEW ACCOUNT TYPE</string>
+    <string name="new_admin_button_text">NEW ADMIN</string>
+    <string name="new_guest_button_text">NEW GUEST</string>
+    <string name="pibell_guest_sign_up_page_title">PiBell Guest Sign Up</string>
+    <string name="admin_id_hint">Admin ID</string>
+    <string name="forgot_password_text">Forgot Password?</string>
+    <string name="change_email_button_text">Change email</string>
 </resources>

@@ -24,7 +24,7 @@ public class MainActivity extends AppCompatActivity {
 
         // Goes to sign-up page if "new user" button pressed
         signupBtn.setOnClickListener(v -> {
-            Intent intent = new Intent(MainActivity.this, SignUpPage.class);
+            Intent intent = new Intent(MainActivity.this, ChooseNewAccountTypePage.class);
             startActivity(intent);
         });
 

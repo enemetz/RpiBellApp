@@ -106,7 +106,7 @@ public class SignUpPage extends AppCompatActivity {
                                             Log.w("TAG", "Error writing document", e);
                                         }
                                     });
-
+                            FirebaseAuth.getInstance().signOut();
                             // go back to login page following successful sign-up
                             Intent intent = new Intent(SignUpPage.this, LoginPage.class);
                             startActivity(intent);
