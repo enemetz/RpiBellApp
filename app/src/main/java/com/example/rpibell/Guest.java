@@ -1,10 +1,10 @@
 package com.example.rpibell;
 
 public class Guest {
-    public String name;
-    public String email;
-    //public String password;
-    //public int imageID;
+    // class variables
+    public String name;     // name of the account
+    public String email;    // email of the account
+    public String ID;       // ID of the account
 
     public String getName() {
         return name;
@@ -18,23 +18,23 @@ public class Guest {
         return email;
     }
 
-    public void setEmail(String setEmail) {
+    public void setEmail(String email) {
         this.email = email;
     }
 
-    /**public int getImageID() {
-     return imageID;
-     }**/
+    public String getID() { return ID; }
 
-    Guest(String name, String email) {
+    public void setID(String ID) {this.ID = ID;}
+
+    Guest(String name, String email, String ID) {
         this.name = name;
         this.email = email;
-        //this.imageID = imageID;
+        this.ID = ID;
     }
 
     @Override
     public String toString() {
-        return String.format(name + ", " + email);
+        return String.format(name + ", " + email + " , " + ID);
     }
 
-}
+} // ends the Guest class

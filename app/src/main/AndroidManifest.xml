@@ -101,6 +101,22 @@
             android:name=".guestSignUpPage"
             android:parentActivityName=".ChooseNewAccountTypePage">
         </activity>
+
+        <activity
+            android:name=".GuestHomePage"
+            android:parentActivityName=".LoginPage">
+        </activity>
+
+        <activity
+            android:name=".GuestSettingsPage"
+            android:parentActivityName=".GuestHomePage">
+        </activity>
+
+        <activity
+            android:name=".GuestNotificationPage"
+            android:parentActivityName=".GuestHomePage">
+        </activity>
+
         
 
 

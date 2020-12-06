@@ -17,34 +17,28 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 public class AdminInfoPage extends AppCompatActivity {
     // Global variables
-    public String userName;                 // current user
-    public String IP;                       // IP address of the user's Raspberry Pi device
-    public String token;                    // user's current token
-    public String email;
-    public String password;
+    public String userName;                         // current user
+    public String IP;                               // IP address of the user's Raspberry Pi device
+    public String token;                            // user's current token
+    public String email;                            // user's email
+    public String password;                         // user's password
 
-    public FloatingActionButton backButton;
-    public TextView AdminID;
-    public TextView Hostname;
+    public FloatingActionButton backButton;         // back Button
+    public TextView AdminID;                        // AdminID display
+    public TextView Hostname;                       // Admin's PiBell Hostname Display
 
-    private FirebaseAuth mAuth;         // access the Firebase Authentication
-    private FirebaseFirestore db;       // access to the Firebase Firestore Database
+    private FirebaseAuth mAuth;                     // access the Firebase Authentication
+    private FirebaseFirestore db;                   // access to the Firebase Firestore Database
 
     public void onCreate(Bundle savedInstanceState)  {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.admin_info_page);
 
-        // set/save the IP address of the user's Raspberry Pi device
+        // get all the data from the past Activity
         IP = getIntent().getExtras().getString("IP");
-
-        // save the username
         userName = getIntent().getExtras().getString("user");
-
-        // save the user's token
         token = getIntent().getExtras().getString("token");
-
         email = getIntent().getExtras().getString("email");
-
         password = getIntent().getExtras().getString("password");
 
         // connect to the Firebase Authentication

@@ -12,21 +12,23 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class guestSignUpPage extends AppCompatActivity {
 
     // Global variables
-    public Button signUpButton;
-    public EditText guestName, guestEmail, guestPassword, guestPiBellHostname , AdminID;
+    public Button signUpButton;                                                             // sign up new guest
+    public EditText guestName, guestEmail, guestPassword, guestPiBellHostname , AdminID;    // info to fill out
 
-    private FirebaseAuth mAuth;
-    private FirebaseFirestore db;
+    private FirebaseAuth mAuth;         // access to Firebase Authentication
+    private FirebaseFirestore db;       // access to the Firebase Firestore
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -72,45 +74,53 @@ public class guestSignUpPage extends AppCompatActivity {
                 return;
             }
 
-            // If user has valid credentials, the user is registered for a guest account
-            mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(this, makeNewGuestAccount -> {
-                if (makeNewGuestAccount.isSuccessful()) {  // Sign in success
-
-                    Map<String, Object> profile = new HashMap<>();
-                    profile.put("email", email);
-                    profile.put("hostname", hostname);
-                    profile.put("name", name);
-                    profile.put("role", "guest");
-                    db.collection("admins").document(adminID)
-                            .collection("guests")
-                            .document(mAuth.getCurrentUser().getUid())
-                            .set(profile)
-                            .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                @Override
-                                public void onSuccess(Void aVoid) {
-                                    Log.e("TAG", "DocumentSnapshot successfully written!");
-                                    Toast.makeText(getApplicationContext(), "Registration successful!", Toast.LENGTH_LONG).show();
-                                    FirebaseAuth.getInstance().signOut();
-                                    // go back to login page following successful sign-up
-                                    Intent intent = new Intent(guestSignUpPage.this, LoginPage.class);
-                                    startActivity(intent);
-                                    finish();
-                                }
-                            })
-                            .addOnFailureListener(new OnFailureListener() {
-                                @Override
-                                public void onFailure(@NonNull Exception e) {
-                                    Log.e("TAG", "Error writing document", e);
-                                    Toast.makeText(getApplicationContext(), "Registration failed. Try again ...", Toast.LENGTH_LONG).show();
-                                }
-                            });
-                } else {
-                    // If sign up fails, display message to the user
-                    Log.w("TAG", "createUserWithEmail:failure", makeNewGuestAccount.getException());
-                    Toast.makeText(this,"Registration failed! Please try again later", Toast.LENGTH_LONG).show();
-                }
+            // check if admin exists ...
+            DocumentReference adminUsers = db.collection("admins").document(adminID);
+            adminUsers.get().addOnCompleteListener(task2 -> {
+               if (task2.isSuccessful()) {
+                   DocumentSnapshot adminDoc = task2.getResult();
+                   if (adminDoc.exists()) {
+                       mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(this, makeNewGuestAccount -> {
+                           if (makeNewGuestAccount.isSuccessful()) {  // Sign in success
+                               Map<String, Object> profile = new HashMap<>();
+                               profile.put("adminID",adminID);
+                               profile.put("email", email);
+                               profile.put("hostname", hostname);
+                               profile.put("name", name);
+                               profile.put("password", password);
+                               profile.put("role", "guest");
+                               db.collection("guests")
+                                       .document(mAuth.getCurrentUser().getUid())
+                                       .set(profile)
+                                       .addOnSuccessListener(aVoid -> {
+                                           Log.e("TAG", "DocumentSnapshot successfully written!");
+                                           Toast.makeText(getApplicationContext(), "Registration successful!", Toast.LENGTH_LONG).show();
+                                           FirebaseAuth.getInstance().signOut();
+                                           // go back to login page following successful sign-up
+                                           Intent intent = new Intent(guestSignUpPage.this, LoginPage.class);
+                                           startActivity(intent);
+                                           finish();
+                                       })
+                                       .addOnFailureListener(new OnFailureListener() {
+                                           @Override
+                                           public void onFailure(@NonNull Exception e) {
+                                               Log.e("TAG", "Error writing document", e);
+                                               Toast.makeText(getApplicationContext(), "Registration failed. Check fields and try again ...", Toast.LENGTH_LONG).show();
+                                           }
+                                       });
+                           } else {
+                               // If sign up fails, display message to the user
+                               Log.w("TAG", "createUserWithEmail:failure", makeNewGuestAccount.getException());
+                               Toast.makeText(this,"Registration failed! Please try again ...", Toast.LENGTH_LONG).show();
+                           }
+                       });
+                   } else {
+                       Toast.makeText(this,"Registration failed! Please try again ...", Toast.LENGTH_LONG).show();
+                   }
+               } else {
+                   Toast.makeText(this,"Registration failed! Please try again ...", Toast.LENGTH_LONG).show();
+               }
             });
-
         });
 
     } // ends onCreate()

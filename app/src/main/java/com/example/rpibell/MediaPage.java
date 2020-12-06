@@ -28,8 +28,8 @@ public class MediaPage extends AppCompatActivity {
     public String userName;                 // current user
     public String IP;                       // IP address of the user's Raspberry Pi device
     public String token;                    // user's current token
-    public String email;
-    public String password;
+    public String email;                    // user's email
+    public String password;                 // user's password
 
     public ArrayList<String> picsToRemove;  // List of pics to remove
     public Button clearButton;              // button used to clear pics from storage
@@ -46,17 +46,11 @@ public class MediaPage extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.media_page);
 
-        // set/save the IP address of the user's Raspberry Pi device
+        // get all info from last Activity
         IP = getIntent().getExtras().getString("IP");
-
-        // save the username
         userName = getIntent().getExtras().getString("user");
-
-        // save the user's token
         token = getIntent().getExtras().getString("token");
-
         email = getIntent().getExtras().getString("email");
-
         password = getIntent().getExtras().getString("password");
 
         // instantiate the arrayList to store the names of files the user wants to delete
@@ -85,7 +79,6 @@ public class MediaPage extends AppCompatActivity {
             intent.putExtra("email",email);
             intent.putExtra("password",password);
             startActivity(intent);
-            finish();
             finish();
         });
 
@@ -154,4 +147,4 @@ public class MediaPage extends AppCompatActivity {
 
     } // ends the onCreate() method
 
-}
+} // ends the MediaPage

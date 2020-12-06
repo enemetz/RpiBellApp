@@ -13,7 +13,7 @@ import androidx.appcompat.app.AppCompatActivity;
  */
 public class MainActivity extends AppCompatActivity {
 
-    Button loginBtn, signupBtn;
+    Button loginBtn, signupBtn;         // simple action buttons for the page
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,7 +33,7 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(MainActivity.this, LoginPage.class);
             startActivity(intent);
         });
-    }
+    } // ends onCreate()
 
     /**
      * Initializes views for sign-up and login buttons.
@@ -42,4 +42,4 @@ public class MainActivity extends AppCompatActivity {
         signupBtn = findViewById(R.id.btnSignUp);
         loginBtn = findViewById(R.id.btnLogin);
     }
-}
+} // ends the MainActivity

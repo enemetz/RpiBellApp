@@ -39,24 +39,24 @@ import java.util.concurrent.ExecutionException;
 public class UserHomePage extends AppCompatActivity {
 
     // Global variables
-    public TextView welcomeBanner;         // Text at top that will be used in order to greet the user
-    public String userName;                // current user
+    public TextView welcomeBanner;          // Text at top that will be used in order to greet the user
+    public String userName;                 // current user
 
-    public Button liveView;                // live view button on the page
-    public Button settings;                // settings button on the page
-    public Button logOut;                  // log out button on the page
-    public Button mediaPage;               // button to bring user to media page to view pictures taken
-    public Button notificationPage;        // button used to bring user to the notifications page to view past notifications
-    public Switch armDeviceSwitch;         // switch that is used to arm/disarm the RPi device
-    public Button manageGuests;            // Go to Guest Management Profile
+    public Button liveView;                 // live view button on the page
+    public Button settings;                 // settings button on the page
+    public Button logOut;                   // log out button on the page
+    public Button mediaPage;                // button to bring user to media page to view pictures taken
+    public Button notificationPage;         // button used to bring user to the notifications page to view past notifications
+    public Switch armDeviceSwitch;          // switch that is used to arm/disarm the RPi device
+    public Button manageGuests;             // Go to Guest Management Profile
 
-    public String IP;                      // IP address of the user's Raspberry Pi device
-    public String token;                   // user's current token
+    public String IP;                       // IP address of the user's Raspberry Pi device
+    public String token;                    // user's current token
 
-    public String email;
-    public String password;
+    public String email;                    // user's email
+    public String password;                 // user's password
 
-    public final int WAIT = 2000;          // amount of time to pause the app in order to give Raspberry Pi Camera time to warm up
+    public final int WAIT = 2000;           // amount of time to pause the app in order to give Raspberry Pi Camera time to warm up
 
 
     /**
@@ -74,14 +74,10 @@ public class UserHomePage extends AppCompatActivity {
         userName = getIntent().getExtras().getString("user");
         welcomeBanner.append("Welcome, " + userName);
 
-        // set/save the IP address of the user's Raspberry Pi device
+        // get all info from the last Activity
         IP = getIntent().getExtras().getString("IP");
-
-        // get the token
         token = getIntent().getExtras().getString("token");
-
         email = getIntent().getExtras().getString("email");
-
         password = getIntent().getExtras().getString("password");
 
 
@@ -127,21 +123,24 @@ public class UserHomePage extends AppCompatActivity {
             try
             {
                 // tell the server to turn on the live stream, then go to the live stream page
-                new turnOnLiveStream().execute(IP);
-                SystemClock.sleep(WAIT);    // give the camera at least 2 seconds to warm up
+                String liveStreamIsOn = new turnOnLiveStream().execute(IP).get();
+                if (liveStreamIsOn.equals("DONE")) {
+                    SystemClock.sleep(WAIT);    // give the camera at least 2 seconds to warm up
 
-                Toast.makeText(UserHomePage.this,"LOADING STREAM..." , Toast.LENGTH_LONG).show();
-                Intent intent = new Intent(UserHomePage.this, LiveViewPage.class);
-                intent.putExtra("user", userName);
-                intent.putExtra("IP",IP);
-                intent.putExtra("token", token);
-                intent.putExtra("email",email);
-                intent.putExtra("password",password);
-                startActivity(intent);
-                finish();
+                    Toast.makeText(UserHomePage.this,"LOADING STREAM..." , Toast.LENGTH_LONG).show();
+                    Intent intent = new Intent(UserHomePage.this, LiveViewPage.class);
+                    intent.putExtra("user", userName);
+                    intent.putExtra("IP",IP);
+                    intent.putExtra("token", token);
+                    intent.putExtra("email",email);
+                    intent.putExtra("password",password);
+                    startActivity(intent);
+                    finish();
+                } else {
+                    Toast.makeText(UserHomePage.this,"PROBLEM CONNECTING TO PiBELL, PLEASE GO TO HELP PAGE LOCATED IN THE SETTINGS" , Toast.LENGTH_LONG).show();
+                }
             } catch (Exception e1) {
                 Toast.makeText(UserHomePage.this,"ERROR LOADING STREAM ..." , Toast.LENGTH_LONG).show();
-                e1.printStackTrace();
             }
         });
 
@@ -342,13 +341,14 @@ public class UserHomePage extends AppCompatActivity {
         /**
          * This method will be used in order to request the main server on the device to start the live stream.
          * @param params the IP address of the raspberry pi device
-         * @return null since nothing else is needed
+         * @return "DONE" if successful, "FAIL" otherwise
          */
         @Override
         protected String doInBackground(String[] params) {
             try {
                 // set local variables
-                Socket socket=new Socket(params[0],RPiDeviceMainServerPort);
+                Socket socket = new Socket();
+                socket.connect(new InetSocketAddress(params[0],RPiDeviceMainServerPort),2000);
                 DataOutputStream dout=new DataOutputStream(socket.getOutputStream());
                 DataInputStream din=new DataInputStream(socket.getInputStream());
 
@@ -363,10 +363,10 @@ public class UserHomePage extends AppCompatActivity {
                 dout.close();
                 din.close();
                 socket.close();
+                return "DONE";
             } catch (Exception e) {
-                e.printStackTrace();
+                return "FAIL";
             }
-            return null;
         } // ends the doInBackground() method
     } // ends the turnOnLiveStream class
 
@@ -390,7 +390,8 @@ public class UserHomePage extends AppCompatActivity {
         protected String doInBackground(String[] params) {
             try {
                 // set local variables
-                Socket socket=new Socket(params[0],RPiDeviceMainServerPort);
+                Socket socket = new Socket();
+                socket.connect(new InetSocketAddress(params[0],RPiDeviceMainServerPort),2000);
                 DataOutputStream dout=new DataOutputStream(socket.getOutputStream());
                 DataInputStream din=new DataInputStream(socket.getInputStream());
 
@@ -430,7 +431,8 @@ public class UserHomePage extends AppCompatActivity {
         protected String doInBackground(String[] params) {
             try {
                 // set local variables
-                Socket socket=new Socket(params[0],RPiDeviceMainServerPort);
+                Socket socket = new Socket();
+                socket.connect(new InetSocketAddress(params[0],RPiDeviceMainServerPort),2000);
                 DataOutputStream dout=new DataOutputStream(socket.getOutputStream());
                 DataInputStream din=new DataInputStream(socket.getInputStream());
 
@@ -476,7 +478,8 @@ public class UserHomePage extends AppCompatActivity {
 
             try {
                 // set local variables
-                Socket socket=new Socket(params[0],RPiDeviceMainServerPort);
+                Socket socket = new Socket();
+                socket.connect(new InetSocketAddress(params[0],RPiDeviceMainServerPort),2000);
                 DataOutputStream dout=new DataOutputStream(socket.getOutputStream());
                 DataInputStream din=new DataInputStream(socket.getInputStream());
 
@@ -731,8 +734,9 @@ public class UserHomePage extends AppCompatActivity {
             Context context = getApplicationContext();          // used in order to get internal data
 
             try {
-                // set local variables
-                Socket socket=new Socket(params[0],RPiDeviceMainServerPort);
+                // set local variables;
+                Socket socket = new Socket();
+                socket.connect(new InetSocketAddress(params[0],RPiDeviceMainServerPort),2000);
                 DataOutputStream dout=new DataOutputStream(socket.getOutputStream());
                 DataInputStream din=new DataInputStream(socket.getInputStream());
 

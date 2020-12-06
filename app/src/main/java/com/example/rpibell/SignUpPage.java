@@ -33,11 +33,11 @@ import java.util.Map;
 public class SignUpPage extends AppCompatActivity {
 
     // Global variables
-    private Button signUp;                                      // sign-up button
-    private EditText nameInput, emailInput, pwInput, ipInput;   // Sign-up fields
+    private Button signUp;                                          // sign-up button
+    private EditText nameInput, emailInput, pwInput, ipInput;       // Sign-up fields
 
-    private FirebaseAuth mAuth;
-    private FirebaseFirestore db;
+    private FirebaseAuth mAuth;                                     // access to Firebase Authentication
+    private FirebaseFirestore db;                                   // access to Firebase Firestore
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -82,42 +82,30 @@ public class SignUpPage extends AppCompatActivity {
 
         // If user has valid credentials, the user is registered for an admin account
         mAuth.createUserWithEmailAndPassword(email, password)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {  // Sign in success
-                            Toast.makeText(getApplicationContext(), "Registration successful!", Toast.LENGTH_LONG).show();
+                .addOnCompleteListener(this, task -> {
+                    if (task.isSuccessful()) {  // Sign in success
+                        Map<String, Object> profile = new HashMap<>();
+                        profile.put("email", email);
+                        profile.put("hostname", hostname);
+                        profile.put("name", name);
+                        profile.put("password",password);
+                        profile.put("role","admin");
+                        db.collection("admins").document(mAuth.getCurrentUser().getUid())
+                                .set(profile)
+                                .addOnSuccessListener(aVoid ->  {
+                                    Toast.makeText(getApplicationContext(), "Registration successful!", Toast.LENGTH_LONG).show();
+                                    // go back to login page following successful sign-up
+                                    FirebaseAuth.getInstance().signOut();
+                                    Intent intent = new Intent(SignUpPage.this, LoginPage.class);
+                                    startActivity(intent);
+                                    finish();
+                                })
+                                .addOnFailureListener(e -> Toast.makeText(getApplicationContext(), "Registration failed! Please try again later", Toast.LENGTH_LONG).show());
 
-                            Map<String, Object> profile = new HashMap<>();
-                            profile.put("email", email);
-                            profile.put("hostname", hostname);
-                            profile.put("name", name);
-                            db.collection("admins").document(mAuth.getCurrentUser().getUid())
-                                    .set(profile)
-                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                        @Override
-                                        public void onSuccess(Void aVoid) {
-                                            Log.d("TAG", "DocumentSnapshot successfully written!");
-                                        }
-                                    })
-                                    .addOnFailureListener(new OnFailureListener() {
-                                        @Override
-                                        public void onFailure(@NonNull Exception e) {
-                                            Log.w("TAG", "Error writing document", e);
-                                        }
-                                    });
-                            FirebaseAuth.getInstance().signOut();
-                            // go back to login page following successful sign-up
-                            Intent intent = new Intent(SignUpPage.this, LoginPage.class);
-                            startActivity(intent);
-                            finish();
-
-                        } else {
-                            // If sign up fails, display message to the user
-                            Log.w("TAG", "createUserWithEmail:failure", task.getException());
-                            Toast.makeText(SignUpPage.this,"Registration failed! Please try again later",
-                                    Toast.LENGTH_LONG).show();
-                        }
+                    } else {
+                        // If sign up fails, display message to the user
+                        Log.w("TAG", "createUserWithEmail:failure", task.getException());
+                        Toast.makeText(SignUpPage.this,"Registration failed! Please try again later",Toast.LENGTH_LONG).show();
                     }
                 });
     }
@@ -133,4 +121,4 @@ public class SignUpPage extends AppCompatActivity {
         signUp = findViewById(R.id.SignUpButton);
     }
 
-}
+} // ends the SignUpPage class

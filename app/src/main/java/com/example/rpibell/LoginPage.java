@@ -35,8 +35,7 @@ public class LoginPage extends AppCompatActivity {
     public static final String TAG = "MyFirebaseMsgService";
 
     public Button logIn;                // log in button
-    public TextView resetPass;
-
+    public TextView resetPass;          // pop-up area for password reset
 
     private EditText emailInput;        // user email
     private EditText passwordInput;     // user password
@@ -44,8 +43,8 @@ public class LoginPage extends AppCompatActivity {
     public String IP;                   // the IP address of the Raspberry Pi device  to connect to
     public String token;                // token for the current connection
     public String username;             // username used to greet the user
-    public String email;
-    public String password;
+    public String email;                // email used in order to log the user in
+    public String password;             // password used in order to log the user in
 
     private FirebaseAuth mAuth;         // access the Firebase Authentication
     private FirebaseFirestore db;       // access to the Firebase Firestore Database
@@ -70,8 +69,166 @@ public class LoginPage extends AppCompatActivity {
         passwordInput = findViewById(R.id.userPasswordInput);
 
 
-        // where remember me would be, need a way to obtain the password in order to get this to work
+        // remember me feature
+        if (mAuth.getCurrentUser() != null) {
+            // get user document (info) from list of admin users
+            DocumentReference adminUsers = db.collection("admins").document(mAuth.getCurrentUser().getUid());
+            adminUsers.get().addOnCompleteListener(task1 -> {
+                if (task1.isSuccessful()) { // successful in getting "list" from admin collection
+                    DocumentSnapshot document = task1.getResult();
+                    if (document.exists()) { // found user info in the admin's collection
+                        Log.e("Status", "User data obtained");
+                        String hostname = document.getString("hostname");
+                        email = document.getString("email");
+                        password = document.getString("password");
 
+                        try
+                        {
+                            // get the IP (try both a direct and lan connection)
+                            IP = new getIP().execute(hostname).get();
+                            if (IP == null) {
+                                String newHostName = hostname + ".lan";         // sometimes, the .lan connection works better than the direct access
+                                IP = new getIP().execute(newHostName).get();
+                            }
+
+                            // cannot locate PiBEll, ler user know and allow them to go to the homepage>settings to resolve
+                            if (IP == null) {
+                                Toast.makeText(LoginPage.this,"CANNOT FIND PiBELL. PLEASE CHECK THE HELP PAGE IN SETTINGS TO RESOLVE THE ISSUE." , Toast.LENGTH_LONG).show();
+                                // Gets current token
+                                FirebaseMessaging.getInstance().getToken().addOnCompleteListener(task2 -> {
+                                    if (!task2.isSuccessful()) {
+                                        Log.w(TAG, "Fetching FCM registration token failed", task2.getException());
+                                        token = null;
+                                        Toast.makeText(LoginPage.this,"TROUBLE CONNECTING TO FIREBASE, TRY AGAIN LATER ..." , Toast.LENGTH_LONG).show();
+                                        return;
+                                    }
+                                    // Get new FCM registration token
+                                    token = task2.getResult();
+                                    Log.e("Registration Token", token);
+                                    Log.e("Status", "Cannot get IP Address");
+                                    username = document.getString("name");
+                                    Toast.makeText(getApplicationContext(), "FAILED TO CONNECT TO PiBELL. PLEASE RESOLVE IN SETTINGS.", Toast.LENGTH_LONG).show();
+                                    Intent intent = new Intent(LoginPage.this, UserHomePage.class);
+                                    intent.putExtra("user", username);
+                                    intent.putExtra("IP",IP);
+                                    intent.putExtra("token", token);
+                                    intent.putExtra("email",email);
+                                    intent.putExtra("password",password);
+                                    startActivity(intent);
+                                    finish();
+                                });
+                            } else {
+                                // Gets current token
+                                FirebaseMessaging.getInstance().getToken().addOnCompleteListener(task2 -> {
+                                    if (!task2.isSuccessful()) {
+                                        Log.w(TAG, "Fetching FCM registration token failed", task2.getException());
+                                        token = null;
+                                        Toast.makeText(LoginPage.this,"TROUBLE CONNECTING TO FIREBASE, TRY AGAIN LATER ..." , Toast.LENGTH_LONG).show();
+                                        return;
+                                    }
+                                    // Get new FCM registration token and move to the next activity
+                                    token = task2.getResult();
+                                    username = document.getString("name");
+                                    Toast.makeText(getApplicationContext(), "Login successful!", Toast.LENGTH_LONG).show();
+                                    Intent intent = new Intent(LoginPage.this, UserHomePage.class);
+                                    intent.putExtra("user", username);
+                                    intent.putExtra("IP",IP);
+                                    intent.putExtra("token", token);
+                                    intent.putExtra("email",email);
+                                    intent.putExtra("password",password);
+                                    startActivity(intent);
+                                    finish();
+                                });
+                            }
+                        } catch (Exception e1) {
+                            Log.e("Status", "Exception in moving to the next Activity.");
+                            Toast.makeText(getApplicationContext(), "ERROR OCCURRED IN CURRENT ACTIVITY. PLEASE TRY AGAIN LATER...", Toast.LENGTH_LONG).show();
+                        }
+                    } else {
+                        // they might be a guest
+                        DocumentReference guestUsers = db.collection("guests").document(mAuth.getCurrentUser().getUid());
+                        guestUsers.get().addOnCompleteListener(task2 -> {
+                            DocumentSnapshot guestDoc = task2.getResult();
+                            if (guestDoc.exists()) {
+                                Log.e("Status", "User data obtained");
+                                String hostname = guestDoc.getString("hostname");
+                                email = guestDoc.getString("email");
+                                password = guestDoc.getString("password");
+
+                                try
+                                {
+                                    // get the IP (try both a direct and lan connection)
+                                    IP = new getIP().execute(hostname).get();
+                                    if (IP == null) {
+                                        String newHostName = hostname + ".lan";         // sometimes, the .lan connection works better than the direct access
+                                        IP = new getIP().execute(newHostName).get();
+                                    }
+
+                                    // cannot locate PiBEll, ler user know and allow them to go to the homepage>settings to resolve
+                                    if (IP == null) {
+                                        Toast.makeText(LoginPage.this,"CANNOT FIND PiBELL. PLEASE CHECK THE HELP PAGE IN SETTINGS TO RESOLVE THE ISSUE." , Toast.LENGTH_LONG).show();
+                                        // Gets current token
+                                        FirebaseMessaging.getInstance().getToken().addOnCompleteListener(task3 -> {
+                                            if (!task3.isSuccessful()) {
+                                                Log.w(TAG, "Fetching FCM registration token failed", task3.getException());
+                                                token = null;
+                                                Toast.makeText(LoginPage.this,"TROUBLE CONNECTING TO FIREBASE, TRY AGAIN LATER ..." , Toast.LENGTH_LONG).show();
+                                                return;
+                                            }
+                                            // Get new FCM registration token
+                                            token = task3.getResult();
+                                            Log.e("Registration Token", token);
+                                            Log.e("Status", "Cannot get IP Address");
+                                            username = guestDoc.getString("name");
+                                            Toast.makeText(getApplicationContext(), "FAILED TO CONNECT TO PiBELL. PLEASE RESOLVE IN SETTINGS.", Toast.LENGTH_LONG).show();
+                                            Intent intent = new Intent(LoginPage.this, GuestHomePage.class);
+                                            intent.putExtra("user", username);
+                                            intent.putExtra("IP",IP);
+                                            intent.putExtra("token", token);
+                                            intent.putExtra("email",email);
+                                            intent.putExtra("password",password);
+                                            startActivity(intent);
+                                            finish();
+                                        });
+                                    } else {
+                                        // Gets current token
+                                        FirebaseMessaging.getInstance().getToken().addOnCompleteListener(task4 -> {
+                                            if (!task4.isSuccessful()) {
+                                                Log.w(TAG, "Fetching FCM registration token failed", task4.getException());
+                                                token = null;
+                                                Toast.makeText(LoginPage.this,"TROUBLE CONNECTING TO FIREBASE, TRY AGAIN LATER ..." , Toast.LENGTH_LONG).show();
+                                                return;
+                                            }
+                                            // Get new FCM registration token and move to the next activity
+                                            token = task4.getResult();
+                                            username = guestDoc.getString("name");
+                                            Toast.makeText(getApplicationContext(), "Login successful!", Toast.LENGTH_LONG).show();
+                                            Intent intent = new Intent(LoginPage.this, GuestHomePage.class);
+                                            intent.putExtra("user", username);
+                                            intent.putExtra("IP",IP);
+                                            intent.putExtra("token", token);
+                                            intent.putExtra("email",email);
+                                            intent.putExtra("password",password);
+                                            startActivity(intent);
+                                            finish();
+                                        });
+                                    }
+                                } catch (Exception e1) {
+                                    Log.e("Status", "Exception in moving to the next Activity.");
+                                    Toast.makeText(getApplicationContext(), "ERROR OCCURRED IN CURRENT ACTIVITY. PLEASE TRY AGAIN LATER...", Toast.LENGTH_LONG).show();
+                                }
+                            } else {
+                                Toast.makeText(getApplicationContext(), "ERROR OBTAINING USER DATA. PLEASE TRY AGAIN.", Toast.LENGTH_LONG).show();
+                                Log.e("Status","Error occurred when trying to get user info from database.");
+                            }
+                        });
+                    }
+                } else {
+                    Toast.makeText(getApplicationContext(), "ERROR OBTAINING USER DATA. PLEASE TRY AGAIN.", Toast.LENGTH_LONG).show();
+                    Log.e("Status","Error occurred when trying to get user info from database.");
+                }
+            });
+        } // ends the remember me feature
 
 
         // once the login in pressed, check the username and password with the Firebase Authentication
@@ -100,13 +257,16 @@ public class LoginPage extends AppCompatActivity {
                     // get user document (info) from list of admin users
                     DocumentReference adminUsers = db.collection("admins").document(user.getUid());
                     adminUsers.get().addOnCompleteListener(task1 -> {
-
-                        // found user info
-                        if (task1.isSuccessful()) {
+                        if (task1.isSuccessful()) { // successful in getting "list" from admin collection
                             DocumentSnapshot document = task1.getResult();
-                            if (document.exists()) {
+                            if (document.exists()) { // found user info in the admin's collection
                                 Log.e("Status", "User data obtained");
                                 String hostname = document.getString("hostname");
+
+                                // put the email and password into the fields as well (will use later for remember me)
+                                adminUsers.update("email",email);
+                                adminUsers.update("password",password);
+
                                 try
                                 {
                                     // get the IP (try both a direct and lan connection)
@@ -170,18 +330,95 @@ public class LoginPage extends AppCompatActivity {
                                     Toast.makeText(getApplicationContext(), "ERROR OCCURRED IN CURRENT ACTIVITY. PLEASE TRY AGAIN LATER...", Toast.LENGTH_LONG).show();
                                 }
                             } else {
-                                Log.e("Status", "Error obtaining user data");
-                                Toast.makeText(getApplicationContext(), "ERROR OBTAINING USER AND DEVICE INFO. TRY AGAIN LATER...", Toast.LENGTH_LONG).show();
+                                // they might be a guest
+                                DocumentReference guestUsers = db.collection("guests").document(user.getUid());
+                                guestUsers.get().addOnCompleteListener(task2 -> {
+                                    DocumentSnapshot guestDoc = task2.getResult();
+                                    if (guestDoc.exists()) {
+                                        Log.e("Status", "User data obtained");
+                                        String hostname = guestDoc.getString("hostname");
+
+                                        // put the email and password into the fields as well (will use later for remember me)
+                                        guestUsers.update("email",email);
+                                        guestUsers.update("password",password);
+
+                                        try
+                                        {
+                                            // get the IP (try both a direct and lan connection)
+                                            IP = new getIP().execute(hostname).get();
+                                            if (IP == null) {
+                                                String newHostName = hostname + ".lan";         // sometimes, the .lan connection works better than the direct access
+                                                IP = new getIP().execute(newHostName).get();
+                                            }
+
+                                            // cannot locate PiBEll, ler user know and allow them to go to the homepage>settings to resolve
+                                            if (IP == null) {
+                                                Toast.makeText(LoginPage.this,"CANNOT FIND PiBELL. PLEASE CHECK THE HELP PAGE IN SETTINGS TO RESOLVE THE ISSUE." , Toast.LENGTH_LONG).show();
+                                                // Gets current token
+                                                FirebaseMessaging.getInstance().getToken().addOnCompleteListener(task3 -> {
+                                                    if (!task3.isSuccessful()) {
+                                                        Log.w(TAG, "Fetching FCM registration token failed", task3.getException());
+                                                        token = null;
+                                                        Toast.makeText(LoginPage.this,"TROUBLE CONNECTING TO FIREBASE, TRY AGAIN LATER ..." , Toast.LENGTH_LONG).show();
+                                                        return;
+                                                    }
+                                                    // Get new FCM registration token
+                                                    token = task3.getResult();
+                                                    Log.e("Registration Token", token);
+                                                    Log.e("Status", "Cannot get IP Address");
+                                                    username = guestDoc.getString("name");
+                                                    Toast.makeText(getApplicationContext(), "FAILED TO CONNECT TO PiBELL. PLEASE RESOLVE IN SETTINGS.", Toast.LENGTH_LONG).show();
+                                                    Intent intent = new Intent(LoginPage.this, GuestHomePage.class);
+                                                    intent.putExtra("user", username);
+                                                    intent.putExtra("IP",IP);
+                                                    intent.putExtra("token", token);
+                                                    intent.putExtra("email",email);
+                                                    intent.putExtra("password",password);
+                                                    startActivity(intent);
+                                                    finish();
+                                                });
+                                            } else {
+                                                // Gets current token
+                                                FirebaseMessaging.getInstance().getToken().addOnCompleteListener(task4 -> {
+                                                    if (!task4.isSuccessful()) {
+                                                        Log.w(TAG, "Fetching FCM registration token failed", task4.getException());
+                                                        token = null;
+                                                        Toast.makeText(LoginPage.this,"TROUBLE CONNECTING TO FIREBASE, TRY AGAIN LATER ..." , Toast.LENGTH_LONG).show();
+                                                        return;
+                                                    }
+                                                    // Get new FCM registration token and move to the next activity
+                                                    token = task4.getResult();
+                                                    username = guestDoc.getString("name");
+                                                    Toast.makeText(getApplicationContext(), "Login successful!", Toast.LENGTH_LONG).show();
+                                                    Intent intent = new Intent(LoginPage.this, GuestHomePage.class);
+                                                    intent.putExtra("user", username);
+                                                    intent.putExtra("IP",IP);
+                                                    intent.putExtra("token", token);
+                                                    intent.putExtra("email",email);
+                                                    intent.putExtra("password",password);
+                                                    startActivity(intent);
+                                                    finish();
+                                                });
+                                            }
+                                        } catch (Exception e1) {
+                                            Log.e("Status", "Exception in moving to the next Activity.");
+                                            Toast.makeText(getApplicationContext(), "ERROR OCCURRED IN CURRENT ACTIVITY. PLEASE TRY AGAIN LATER...", Toast.LENGTH_LONG).show();
+                                        }
+                                    } else {
+                                        Toast.makeText(getApplicationContext(), "ERROR OBTAINING USER DATA. PLEASE TRY AGAIN.", Toast.LENGTH_LONG).show();
+                                        Log.e("Status","Error occurred when trying to get user info from database.");
+                                    }
+                                });
                             }
                         } else {
-                            // check all the guest accounts ....
-                            Log.e("Status","User not found in admin, must now check guests.");
+                            Toast.makeText(getApplicationContext(), "ERROR OBTAINING USER DATA. PLEASE TRY AGAIN.", Toast.LENGTH_LONG).show();
+                            Log.e("Status","Error occurred when trying to get user info from database.");
                         }
                     });
                 } else {
                     // sign-in failed
                     Log.w("Login Status", "signInWithEmail:failure", task.getException());
-                    Toast.makeText(getApplicationContext(), "LOGIN FAILED! TRY AGAIN LATER", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), "LOGIN FAILED! TRY AGAIN", Toast.LENGTH_LONG).show();
                 }
             });
         });
@@ -190,13 +427,17 @@ public class LoginPage extends AppCompatActivity {
         //Code for resetting password
         resetPass = findViewById(R.id.passwordResetButton);
         resetPass.setOnClickListener(view -> {
-            mAuth.sendPasswordResetEmail(emailInput.getText().toString())
-                    .addOnCompleteListener(task -> {
-                        if(task.isSuccessful()) {
-                            Toast.makeText(getApplicationContext(), "Password reset email sent.", Toast.LENGTH_LONG).show();
-                            Log.d(TAG, "Email sent");
-                        }
-                    });
+            if (emailInput.getText().toString().isEmpty()) {
+                Toast.makeText(LoginPage.this,"PLEASE ENTER AN EMAIL" , Toast.LENGTH_LONG).show();
+                return;
+            }
+            mAuth.sendPasswordResetEmail(emailInput.getText().toString()).addOnCompleteListener(task -> {
+                if(task.isSuccessful()) {
+                    Toast.makeText(getApplicationContext(), "Password reset email sent.", Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(getApplicationContext(), "EMAIL NOT FOUND IN RECORDS...", Toast.LENGTH_LONG).show();
+                }
+            });
         });
 
 
@@ -236,93 +477,3 @@ public class LoginPage extends AppCompatActivity {
 
 
 } // ends the LoginPage class
-
-/*
-
-// user has already logged into this device and has not logged out (token still active)
-        if (mAuth.getCurrentUser() != null) {
-
-            // use the userID to look up user info in the DB
-            FirebaseUser user = mAuth.getCurrentUser();
-            Log.e("userID",user.getUid());
-
-            // get user document (info) from list of admin users
-            DocumentReference adminUsers = db.collection("admins").document(user.getUid());
-            adminUsers.get().addOnCompleteListener(task1 -> {
-
-                // found user info
-                if (task1.isSuccessful()) {
-                    DocumentSnapshot document = task1.getResult();
-                    if (document.exists()) {
-                        Log.e("Status", "User data obtained");
-                        String hostname = document.getString("hostname");
-                        try
-                        {
-                            // get the IP (try both a direct and lan connection)
-                            IP = new getIP().execute(hostname).get();
-                            if (IP == null) {
-                                String newHostName = hostname + ".lan";         // sometimes, the .lan connection works better than the direct access
-                                IP = new getIP().execute(newHostName).get();
-                            }
-
-                            // cannot locate PiBEll, ler user know and allow them to go to the homepage>settings to resolve
-                            if (IP == null) {
-                                Toast.makeText(LoginPage.this,"CANNOT FIND PiBELL. PLEASE CHECK THE HELP PAGE IN SETTINGS TO RESOLVE THE ISSUE." , Toast.LENGTH_LONG).show();
-                                // Gets current token
-                                FirebaseMessaging.getInstance().getToken().addOnCompleteListener(task2 -> {
-                                    if (!task2.isSuccessful()) {
-                                        Log.w(TAG, "Fetching FCM registration token failed", task2.getException());
-                                        token = null;
-                                        Toast.makeText(LoginPage.this,"TROUBLE CONNECTING TO FIREBASE, TRY AGAIN LATER ..." , Toast.LENGTH_LONG).show();
-                                        return;
-                                    }
-                                    // Get new FCM registration token
-                                    token = task2.getResult();
-                                    Log.e("Registration Token", token);
-                                    Log.e("Status", "Cannot get IP Address");
-                                    username = document.getString("name");
-                                    Toast.makeText(getApplicationContext(), "FAILED TO CONNECT TO PiBELL. PLEASE RESOLVE IN SETTINGS.", Toast.LENGTH_LONG).show();
-                                    Intent intent = new Intent(LoginPage.this, UserHomePage.class);
-                                    intent.putExtra("user", username);
-                                    intent.putExtra("IP",IP);
-                                    intent.putExtra("token", token);
-                                    startActivity(intent);
-                                    finish();
-                                });
-                            } else {
-                                // Gets current token
-                                FirebaseMessaging.getInstance().getToken().addOnCompleteListener(task2 -> {
-                                    if (!task2.isSuccessful()) {
-                                        Log.w(TAG, "Fetching FCM registration token failed", task2.getException());
-                                        token = null;
-                                        Toast.makeText(LoginPage.this,"TROUBLE CONNECTING TO FIREBASE, TRY AGAIN LATER ..." , Toast.LENGTH_LONG).show();
-                                        return;
-                                    }
-                                    // Get new FCM registration token and move to the next activity
-                                    token = task2.getResult();
-                                    username = document.getString("name");
-                                    Toast.makeText(getApplicationContext(), "Login successful!", Toast.LENGTH_LONG).show();
-                                    Intent intent = new Intent(LoginPage.this, UserHomePage.class);
-                                    intent.putExtra("user", username);
-                                    intent.putExtra("IP",IP);
-                                    intent.putExtra("token", token);
-                                    startActivity(intent);
-                                    finish();
-                                });
-                            }
-                        } catch (Exception e1) {
-                            Log.e("Status", "Exception in moving to the next Activity.");
-                            Toast.makeText(getApplicationContext(), "ERROR OCCURRED IN CURRENT ACTIVITY. PLEASE TRY AGAIN LATER...", Toast.LENGTH_LONG).show();
-                        }
-                    } else {
-                        Log.e("Status", "Error obtaining user data");
-                        Toast.makeText(getApplicationContext(), "ERROR OBTAINING USER AND DEVICE INFO. TRY AGAIN LATER...", Toast.LENGTH_LONG).show();
-                    }
-                } else {
-                    // check all the guest accounts ....
-                    Log.e("Status","User not found in admin, must now check guests.");
-                }
-            });
-        }
-
- */

@@ -9,8 +9,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 public class ChooseNewAccountTypePage extends AppCompatActivity {
     // Global variables
-    Button newAdminButton;
-    Button newGuestButton;
+    Button newAdminButton;          // make new Admin account
+    Button newGuestButton;          // make new Guest account
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

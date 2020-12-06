@@ -41,20 +41,24 @@ import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 
 /**
  * This is the LiveViewPage class.
- * Here the user will be able to view the live stream from the raspberry pi.
+ * Here the user will be able to view the live stream from the PiBell.
  */
 public class LiveViewPage extends AppCompatActivity {
 
     // Global variables
     public Button backButton;                       // back button on the page
     public Button picButton;                        // button used to take pic during live stream
+
     public WebView liveCam;                         // web viewer on the page
+
     public String userName;                         // username that needs to be passed between all pages
-    public String IP;                               // IP address of the raspberry pi device playing live stream
+    public String IP;                               // IP address of the PiBell device playing live stream
     public String token;                            // user's current token
-    public final int liveStreamPort = 5000;         // specific port that the raspberry pi is using for the live stream
-    public String email;
-    public String password;
+
+    public final int liveStreamPort = 5000;         // specific port that the PiBell is using for the live stream
+
+    public String email;                            // user's email used for log in
+    public String password;                         // user's password used for log in
 
     /**
      * This method will be used in order to set up the Live View Page.
@@ -65,7 +69,7 @@ public class LiveViewPage extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.live_stream_page);
 
-        // get username to get back to user page
+        // get all the extra info from the passed intent
         userName = getIntent().getExtras().getString("user");
         IP = getIntent().getExtras().getString("IP");
         token = getIntent().getExtras().getString("token");
@@ -89,7 +93,7 @@ public class LiveViewPage extends AppCompatActivity {
         backButton.setOnClickListener(view -> {
             try
             {
-                new NetTask1().execute(IP); // here tell, the server to turn off the live stream
+                new turnOffLiveStream().execute(IP); // here tell, the server to turn off the live stream
                 Intent intent = new Intent(LiveViewPage.this, UserHomePage.class);
                 intent.putExtra("user", userName);
                 intent.putExtra("IP",IP);
@@ -99,8 +103,7 @@ public class LiveViewPage extends AppCompatActivity {
                 startActivity(intent);
                 finish();
             } catch (Exception e1) {
-                //Toast.makeText(this,"HERE",Toast.LENGTH_LONG).show();
-                e1.printStackTrace();
+                Toast.makeText(this, "ERROR OCCURRED. PLEASE TRY AGAIN ...", Toast.LENGTH_LONG).show();
             }
         });
 
@@ -109,22 +112,24 @@ public class LiveViewPage extends AppCompatActivity {
         picButton.setOnClickListener(view -> {
             try
             {
-                new NetTask2().execute(IP); // here tell, the server to turn off the live stream
+                new takeLivePic().execute(IP); // here tell, the server to turn off the live stream
                 Toast.makeText(LiveViewPage.this,"TAKING PICTURE..." , Toast.LENGTH_LONG).show();
                 SystemClock.sleep(3000);    // give the camera at least 3 seconds to warm up
                 liveCam.loadUrl(url);
 
                 verifyStoragePermissions(this);
                 String[] args = {IP,userName};
-                new NetTask3().execute(args); // here tell, send over the picture taken
+                new sendOverLivePic().execute(args); // here tell, send over the picture taken
 
             } catch (Exception e1) {
-                e1.printStackTrace();
+                Toast.makeText(this, "ERROR OCCURRED. PLEASE TRY AGAIN ...", Toast.LENGTH_LONG).show();
             }
         });
 
 
     } // ends the onCreate() method
+
+
 
 
     /**
@@ -154,11 +159,13 @@ public class LiveViewPage extends AppCompatActivity {
         }
     }
 
+
+
     /**
-     * This is the NetTask class that will be used to request the raspberry pi device to turn off the live stream.
+     * This is the turnOffLiveStream class that will be used to request the raspberry pi device to turn off the live stream.
      * This will be executed in the background.
      */
-    public static class NetTask1 extends AsyncTask<String, Integer, String> {
+    public static class turnOffLiveStream extends AsyncTask<String, Integer, String> {
         // Global variables
         public final int RPiDeviceMainServerPort = 9000;
 
@@ -188,19 +195,21 @@ public class LiveViewPage extends AppCompatActivity {
                 dout.close();
                 din.close();
                 socket.close();
+                return "DONE";
             } catch (Exception e) {
-                e.printStackTrace();
+                return "FAIL";
             }
-            return null;
         } // ends the doInBackground() method
-    } // ends the NetTask1 class
+    } // ends the turnOffLiveStream class
+
+
 
 
     /**
-     * This is the NetTask class that will be used to request the raspberry pi device to take a picture
+     * This is the takeLivePic class that will be used to request the raspberry pi device to take a picture
      * while the live stream is running.
      */
-    public static class NetTask2 extends AsyncTask<String, Integer, String> {
+    public static class takeLivePic extends AsyncTask<String, Integer, String> {
         // Global variables
         public final int RPiDeviceMainServerPort = 9000;
 
@@ -213,7 +222,8 @@ public class LiveViewPage extends AppCompatActivity {
         protected String doInBackground(String[] params) {
             try {
                 // set local variables
-                Socket socket=new Socket(params[0],RPiDeviceMainServerPort);
+                Socket socket = new Socket();
+                socket.connect(new InetSocketAddress(params[0],RPiDeviceMainServerPort),2000);
                 DataOutputStream dout=new DataOutputStream(socket.getOutputStream());
                 DataInputStream din=new DataInputStream(socket.getInputStream());
 
@@ -228,18 +238,20 @@ public class LiveViewPage extends AppCompatActivity {
                 dout.close();
                 din.close();
                 socket.close();
+                return "DONE";
             } catch (Exception e) {
-                e.printStackTrace();
+                return "FAIL";
             }
-            return null;
         } // ends the doInBackground() method
-    } // ends the NetTask2 class
+    } // ends the takeLivePic class
+
+
 
     /**
-     * This is the NetTask class that will be used to request the raspberry pi device to send over the picture
+     * This is the sendOverLivePic class that will be used to request the raspberry pi device to send over the picture
      * that was taken during the live stream.
      */
-    public class NetTask3 extends AsyncTask<String, Integer, String> {
+    public class sendOverLivePic extends AsyncTask<String, Integer, String> {
         // Global variables
         public final int RPiDeviceMainServerPort = 9000;
 
@@ -256,7 +268,8 @@ public class LiveViewPage extends AppCompatActivity {
 
             try {
                 // set local variables
-                Socket socket=new Socket(params[0],RPiDeviceMainServerPort);
+                Socket socket = new Socket();
+                socket.connect(new InetSocketAddress(params[0],RPiDeviceMainServerPort),2000);
                 DataOutputStream dout=new DataOutputStream(socket.getOutputStream());
                 DataInputStream din=new DataInputStream(socket.getInputStream());
 
@@ -292,16 +305,12 @@ public class LiveViewPage extends AppCompatActivity {
                     dout.flush();
 
                     // get new pic file ready
-
                     File dir = context.getDir(params[1], Context.MODE_PRIVATE); //Creating an internal dir;
                     File file = new File(dir, picName); //Getting a file within the dir.
                     FileOutputStream filePtr = new FileOutputStream(file);
 
-
-                    //File file = new File(context.getFilesDir(), picName);
                     Log.e("fileMade","" + file.getName());
                     Log.e("pathOfFile","" + file.getAbsolutePath());
-                    //FileOutputStream filePtr = openFileOutput(file.getName() , Context.MODE_PRIVATE);
 
                     // copy the bytes to buffer
                     int count;
@@ -316,7 +325,6 @@ public class LiveViewPage extends AppCompatActivity {
                         filePtr.write(buffer, 0, count);
                     } // ends the while-loop
                     Log.e("status","File received");
-                    // write the bytes into the file and the CLOSE it
                     filePtr.close();
 
                     // say OK
@@ -332,10 +340,13 @@ public class LiveViewPage extends AppCompatActivity {
                 dout.close();
                 din.close();
                 socket.close();
+                return "DONE";
             } catch (Exception e) {
-                e.printStackTrace();
+                return "FAIL";
             }
-            return null;
         } // ends the doInBackground() method
-    } // ends the NetTask3 class
+    } // ends the sendOverLivePic class
+
+
+
 } // ends the LiveViewPage class

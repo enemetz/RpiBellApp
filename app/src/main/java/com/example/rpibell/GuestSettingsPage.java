@@ -2,16 +2,13 @@ package com.example.rpibell;
 
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.SystemClock;
 import android.text.InputType;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
@@ -35,18 +32,10 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
-import java.net.UnknownHostException;
-import java.util.concurrent.ExecutionException;
 
-/**
- * This is the SettingsPage class.
- * This is the settings page where the user will have the ability to change the notification settings or settings on the raspberry pi.
- */
-public class SettingsPage extends AppCompatActivity {
-
+public class GuestSettingsPage extends AppCompatActivity {
     // Global variables
     public String userName;                 // current user
     public String IP;                       // IP address of the user's Raspberry Pi device
@@ -55,41 +44,37 @@ public class SettingsPage extends AppCompatActivity {
     public String password;                 // user's password
 
     public Button back;                     // back button on the page
-    public Button resetEmail;               // button to allow users to change email
-    public Button changePassword;           // button to allow users to change password
+    public Button resetEmail;               // allow user to change email
+    public Button newPassword;              // allow user to change password
     public ToggleButton setNotification;    // toggle button to set notifications on or off
-    public ToggleButton setPictureCapture;  // toggle button to turn on/off picture capture
 
-    private FirebaseAuth mAuth;             // access the Firebase Authentication
-    private FirebaseFirestore db;           // access the Firebase Firestore Database
+    private FirebaseAuth mAuth;             // access to the Firebase Authentication
+    private FirebaseFirestore db;           // access to the Firebase Firestore
 
-    /**
-     * This method will be used in order to set up the Settings Page.
-     * @param savedInstanceState bundle state used to carry some info needed for the page
-     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.settings_page);
+        setContentView(R.layout.guest_settings_page);
 
-        // get all the data from the last Activity
+        // get all data from the past Activity
         IP = getIntent().getExtras().getString("IP");
         userName = getIntent().getExtras().getString("user");
         token = getIntent().getExtras().getString("token");
         email = getIntent().getExtras().getString("email");
         password = getIntent().getExtras().getString("password");
 
+        // connect to Firebase
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
 
+
         //Gets the current user
         final FirebaseUser user = mAuth.getCurrentUser();
-        resetEmail = findViewById(R.id.ChangeEmailButton);
+        resetEmail = findViewById(R.id.guestEmailChange);
         resetEmail.setOnClickListener(view -> {
             // Creates an alert to get text from the user to change their email
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setTitle("Change Email").setMessage("Please type in the new email");
+            builder.setTitle("Change email").setMessage("What would you like to change your email to?");
 
             // Text field to add to the alert dialog
             final EditText input = new EditText(this);
@@ -104,7 +89,7 @@ public class SettingsPage extends AppCompatActivity {
                 user.updateEmail(input.getText().toString()).addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         FirebaseUser currentUser = mAuth.getCurrentUser();
-                        DocumentReference adminUser = db.collection("admins").document(currentUser.getUid());
+                        DocumentReference adminUser = db.collection("guests").document(currentUser.getUid());
                         adminUser.update("email",input.getText().toString()).addOnSuccessListener(aVoid ->
                         {
                             Toast.makeText(getApplicationContext(),"Email updated!", Toast.LENGTH_LONG).show();
@@ -123,8 +108,10 @@ public class SettingsPage extends AppCompatActivity {
         });
 
 
-        changePassword = findViewById(R.id.adminChangePasswordButton);
-        changePassword.setOnClickListener(view -> {
+
+
+        newPassword = findViewById(R.id.guestPasswordChange);
+        newPassword.setOnClickListener(view -> {
             // Creates an alert to get text from the user to change their email
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle("Change Password").setMessage("Please type in new password");
@@ -142,7 +129,7 @@ public class SettingsPage extends AppCompatActivity {
                 user.updatePassword(input.getText().toString()).addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         FirebaseUser currentUser = mAuth.getCurrentUser();
-                        DocumentReference adminUser = db.collection("admins").document(currentUser.getUid());
+                        DocumentReference adminUser = db.collection("guests").document(currentUser.getUid());
                         adminUser.update("password",input.getText().toString()).addOnSuccessListener(aVoid ->
                         {
                             Toast.makeText(getApplicationContext(),"Password updated!", Toast.LENGTH_LONG).show();
@@ -163,11 +150,11 @@ public class SettingsPage extends AppCompatActivity {
 
 
         // once the back button is pressed, request the raspberry pi to end the live stream and then take the user back to the homepage
-        back = this.<Button>findViewById(R.id.backFromSettingsToHome);
+        back = this.<Button>findViewById(R.id.guestSettingPageBackButton);
         back.setOnClickListener(view -> {
             try
             {
-                Intent intent = new Intent(SettingsPage.this, UserHomePage.class);
+                Intent intent = new Intent(this, GuestHomePage.class);
                 intent.putExtra("user", userName);
                 intent.putExtra("IP",IP);
                 intent.putExtra("token", token);
@@ -182,6 +169,7 @@ public class SettingsPage extends AppCompatActivity {
 
 
 
+
         // go through Notification.txt and check if the user wants notifications or not
         String getNotif = null;
         try {
@@ -193,12 +181,12 @@ public class SettingsPage extends AppCompatActivity {
             getNotif = "YES";
         }
         if (getNotif.equals("NO")) {
-            setNotification = findViewById(R.id.notificationToggleButton);
+            setNotification = findViewById(R.id.guestNotificationToggleButton);
             setNotification.setChecked(false);
         }
 
         // once the switch is turned on, the RPi Device must try to detect for motion and send notifications (if the user wants that)
-        setNotification = findViewById(R.id.notificationToggleButton);
+        setNotification = findViewById(R.id.guestNotificationToggleButton);
         setNotification.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if(isChecked){
                 try {
@@ -217,7 +205,8 @@ public class SettingsPage extends AppCompatActivity {
                     Toast.makeText(this, "ERROR OCCURRED. CANNOT RETRIEVE USER PREFERENCES ... ",Toast.LENGTH_LONG).show();
                     setNotification.setChecked(false);
                 }
-            } else {
+            }
+            else {
                 try {
                     String[] params = {IP,userName};
                     String stopNotifsReturn = new stopNotifs().execute(params).get();
@@ -230,6 +219,7 @@ public class SettingsPage extends AppCompatActivity {
                         setNotification.setChecked(true);
                     }
                 } catch (Exception e) {
+                    Log.e("Status", "Error occurred.");
                     Toast.makeText(this, "ERROR OCCURRED. CANNOT RETRIEVE USER PREFERENCES ... ",Toast.LENGTH_LONG).show();
                     setNotification.setChecked(true);
                 }
@@ -238,63 +228,7 @@ public class SettingsPage extends AppCompatActivity {
 
 
 
-
-
-        String wantPicCap = null;
-        try{
-            wantPicCap = new wantPicCapture().execute(userName).get();
-            Log.e("PictureCapture.txt Text",wantPicCap);
-        } catch(Exception e) {
-            Log.e("Status","Cannot read from Notification.txt");
-            Toast.makeText(this, "ERROR OCCURRED. CANNOT RETRIEVE USER PREFERENCES ... ",Toast.LENGTH_LONG).show();
-            wantPicCap = "YES";
-        }
-        if (wantPicCap.equals("NO")) {
-            setPictureCapture = findViewById(R.id.pictureCaptureToggleButton);
-            setPictureCapture.setChecked(false);
-        }
-
-        setPictureCapture = findViewById(R.id.pictureCaptureToggleButton);
-        setPictureCapture.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            if(isChecked){
-                try {
-                    String picCapOn = new turnPictureCaptureON().execute(IP).get();
-                    if (picCapOn.equals("DONE")) {
-                        new writePicCapYES().execute(userName);
-                        Toast.makeText(getApplicationContext(), "PICTURE CAPTURE ON", Toast.LENGTH_SHORT).show();
-                    } else {
-                        Log.e("Status", "Cannot connect to PiBell.");
-                        Toast.makeText(this, " CANNOT CONNECT TO PiBELL. PLEASE REFER TO THE HELP PAGE IN SETTINGS. ",Toast.LENGTH_LONG).show();
-                        setPictureCapture.setChecked(false);
-                    }
-                } catch (Exception e) {
-                    Log.e("Status", "Error occurred.");
-                    Toast.makeText(this, "ERROR OCCURRED. CANNOT RETRIEVE USER PREFERENCES ... ",Toast.LENGTH_LONG).show();
-                    setPictureCapture.setChecked(false);
-                }
-            } else {
-                try {
-                    String picCapOff = new turnPictureCaptureOFF().execute(IP).get();
-                    if (picCapOff.equals("DONE")) {
-                        new writePicCapNO().execute(userName);
-                        Toast.makeText(getApplicationContext(), "PICTURE CAPTURE OFF", Toast.LENGTH_SHORT).show();
-                    } else {
-                        Log.e("Status", "Cannot connect to PiBell.");
-                        Toast.makeText(this, " CANNOT CONNECT TO PiBELL. PLEASE REFER TO THE HELP PAGE IN SETTINGS. ",Toast.LENGTH_LONG).show();
-                        setPictureCapture.setChecked(true);
-                    }
-                } catch (Exception e) {
-                    Log.e("Status", "Error occurred.");
-                    Toast.makeText(this, "ERROR OCCURRED. CANNOT RETRIEVE USER PREFERENCES ... ",Toast.LENGTH_LONG).show();
-                    setPictureCapture.setChecked(true);
-                }
-            }
-        });
-
-
-
-    } // ends the onCreate() method
-
+    } // ends onCreate()
 
 
     /**
@@ -551,238 +485,4 @@ public class SettingsPage extends AppCompatActivity {
         } // ends the doInBackground() method
     } // ends the writeNotifYES class
 
-
-    /**
-     * This is the wantPicCapture class that will be used to check the user's PictureCapture.txt to see if
-     * they set Picture Capture on or off.
-     */
-    public class wantPicCapture extends AsyncTask<String, Integer, String> {
-
-        /**
-         * This method will check the PictureCapture.txt.
-         * @param params username
-         * @return armed or disarmed
-         */
-        @Override
-        protected String doInBackground(String[] params) {
-            Context context = getApplicationContext();
-
-            // get to the settings page
-            File dir = context.getDir(params[0], Context.MODE_PRIVATE);
-            File file = new File(dir, "PictureCapture.txt");
-
-            boolean exists = file.exists();
-            // read from file
-            if (exists == true) {
-                Log.e("PictureCapture.txt status","exist");
-                StringBuilder text = new StringBuilder();
-                try {
-                    BufferedReader br = new BufferedReader(new FileReader(file));
-                    String line;
-                    while ((line = br.readLine()) != null) {
-                        text.append(line);
-                    }
-                    br.close();
-                } catch (IOException e) { e.printStackTrace(); }
-                return text.toString();
-            } else {    // user doesn't have file in there, need to create new one and mark it unarmed
-                Log.e("PictureCapture.txt status","doesn't exist");
-                FileWriter writer = null;
-                try {
-                    writer = new FileWriter(file);
-                    writer.append("YES");   // default; want Picture Capture
-                    writer.flush();
-                    writer.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                return "YES";
-            }
-        } // ends the doInBackground() method
-    } // ends the wantPicCapture class
-
-
-    /**
-     * This is the turnPictureCaptureON class that will be used to tell the PiBell that picture
-     * capture should be on.
-     */
-    public class turnPictureCaptureON extends AsyncTask<String, Integer, String> {
-        // Global variables
-        public final int RPiDeviceMainServerPort = 9000;
-
-        /**
-         * This method will be used in order to update the main server's username and token
-         * @param params the IP address of the raspberry pi device, username and token (respectively)
-         * @return DONE if success, FAIL otherwise
-         */
-        @Override
-        protected String doInBackground(String[] params) {
-            try {
-                Socket socket = new Socket();
-                socket.connect(new InetSocketAddress(params[0],RPiDeviceMainServerPort),2000);
-                DataOutputStream dout=new DataOutputStream(socket.getOutputStream());
-                DataInputStream din=new DataInputStream(socket.getInputStream());
-
-                // tell the server to start the live
-                dout.writeUTF("Pic Capture ON");
-                dout.flush();
-
-                // server responds : "OK"
-                din.readUTF();
-
-                // close all
-                dout.close();
-                din.close();
-                socket.close();
-
-                return "DONE";
-            } catch (Exception e) {
-                Log.e("Connecting to PiBell","Couldn't connect");
-                return "FAIL";
-            }
-        } // ends the doInBackground() method
-    } // ends the turnPictureCaptureON class
-
-
-
-
-    /**
-     * This is the turnPictureCaptureOFF class that will be used to tell the PiBell that picture
-     * capture should be off.
-     */
-    public class turnPictureCaptureOFF extends AsyncTask<String, Integer, String> {
-        // Global variables
-        public final int RPiDeviceMainServerPort = 9000;
-
-        /**
-         * This method will be used in order to update the main server's username and token
-         * @param params the IP address of the raspberry pi device, username and token (respectively)
-         * @return DONE if success, FAIL otherwise
-         */
-        @Override
-        protected String doInBackground(String[] params) {
-            try {
-                Socket socket = new Socket();
-                socket.connect(new InetSocketAddress(params[0],RPiDeviceMainServerPort),2000);
-                DataOutputStream dout=new DataOutputStream(socket.getOutputStream());
-                DataInputStream din=new DataInputStream(socket.getInputStream());
-
-                // tell the server to start the live
-                dout.writeUTF("Pic Capture OFF");
-                dout.flush();
-
-                // server responds : "OK"
-                din.readUTF();
-
-                // close all
-                dout.close();
-                din.close();
-                socket.close();
-
-                return "DONE";
-            } catch (Exception e) {
-                Log.e("Connecting to PiBell","Couldn't connect");
-                return "FAIL";
-            }
-        } // ends the doInBackground() method
-    } // ends the turnPictureCaptureOFF class
-
-    /**
-     * This is the writePicCapYES class that will be used to write "YES" into PictureCapture.txt
-     * since the user wants picture capture.
-     */
-    public class writePicCapYES extends AsyncTask<String, Integer, String> {
-
-        /**
-         * This method will check the setting.txt.
-         * @param params username
-         * @return armed or disarmed
-         */
-        @Override
-        protected String doInBackground(String[] params) {
-            Context context = getApplicationContext();
-
-            // get to the settings page
-            File dir = context.getDir(params[0], Context.MODE_PRIVATE);
-            File file = new File(dir, "PictureCapture.txt");
-
-            boolean exists = file.exists();
-            // read from file
-            if (exists == true) {
-                file.delete();
-                File newFile = new File(dir, "PictureCapture.txt");
-                FileWriter writer = null;
-                try {
-                    writer = new FileWriter(newFile);
-                    writer.append("YES");
-                    writer.flush();
-                    writer.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                return "YES";
-            } else {    // user doesn't have file in there, need to create new one and mark it unarmed
-                FileWriter writer = null;
-                try {
-                    writer = new FileWriter(file);
-                    writer.append("YES");
-                    writer.flush();
-                    writer.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                return "YES";
-            }
-        } // ends the doInBackground() method
-    } // ends the writePicCapYES class
-
-    /**
-     * This is the writePicCapNO class that will be used to write "NO" into PictureCapture.txt
-     * since the user wants picture capture.
-     */
-    public class writePicCapNO extends AsyncTask<String, Integer, String> {
-
-        /**
-         * This method will check the setting.txt.
-         * @param params username
-         * @return armed or disarmed
-         */
-        @Override
-        protected String doInBackground(String[] params) {
-            Context context = getApplicationContext();
-
-            // get to the settings page
-            File dir = context.getDir(params[0], Context.MODE_PRIVATE);
-            File file = new File(dir, "PictureCapture.txt");
-
-            boolean exists = file.exists();
-            // read from file
-            if (exists == true) {
-                file.delete();
-                File newFile = new File(dir, "PictureCapture.txt");
-                FileWriter writer = null;
-                try {
-                    writer = new FileWriter(newFile);
-                    writer.append("NO");
-                    writer.flush();
-                    writer.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                return "NO";
-            } else {    // user doesn't have file in there, need to create new one and mark it unarmed
-                FileWriter writer = null;
-                try {
-                    writer = new FileWriter(file);
-                    writer.append("NO");
-                    writer.flush();
-                    writer.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                return "NO";
-            }
-        } // ends the doInBackground() method
-    } // ends the writePicCapNO class
-
-} // ends the SettingsPage class
+} // ends the Class
