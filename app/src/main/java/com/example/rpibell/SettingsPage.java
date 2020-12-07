@@ -57,6 +57,7 @@ public class SettingsPage extends AppCompatActivity {
     public Button back;                     // back button on the page
     public Button resetEmail;               // button to allow users to change email
     public Button changePassword;           // button to allow users to change password
+    public Button helpPageButton;           // button to go to the help page
     public ToggleButton setNotification;    // toggle button to set notifications on or off
     public ToggleButton setPictureCapture;  // toggle button to turn on/off picture capture
 
@@ -158,6 +159,19 @@ public class SettingsPage extends AppCompatActivity {
             // A null listener allows the button to dismiss the dialog and take no further action.
             builder.setNegativeButton(android.R.string.no, null);
             builder.show();
+        });
+
+
+        helpPageButton = findViewById(R.id.adminHelpPageButton);
+        helpPageButton.setOnClickListener(task -> {
+            Intent intent = new Intent(this, adminHelpPage.class);
+            intent.putExtra("user", userName);
+            intent.putExtra("IP",IP);
+            intent.putExtra("token", token);
+            intent.putExtra("email",email);
+            intent.putExtra("password",password);
+            startActivity(intent);
+            finish();
         });
 
 

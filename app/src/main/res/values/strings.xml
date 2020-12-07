@@ -64,4 +64,27 @@
     <string name="push_notifications_text">PUSH NOTIFICATIONS</string>
     <string name="change_password_button_text">Change Password</string>
     <string name="delete_account_button_text">Delete Account</string>
+    <string name="help_page_title_Text">HELP PAGE</string>
+    <string name="connection_status_label_text">Connection Status:</string>
+    <string name="help_page_retry_button_text">Retry</string>
+    <string name="help_page_general_help_text">
+        Welcome!<br/>
+        If you are having connection problems please try the following:<br/>
+        - Check if the PiBell is turned on and running in good condition (no over-heating, damage, etc.)<br/><br/>
+        - Check if both this device and the PiBell are connected to the same wifi network<br/><br/>
+        - Close the app and restart the PiBell<br/><br/>
+        If you have any more questions, comments or concerns regarding anything PiBell related, please feel free to reach out to:<br/>
+        ThePiBellTeam@gmail.com
+    </string>
+    <string name="generalhelpText_p1">Welcome!<br/></string>
+    <string name="generalhelpText_p2">If you are having connection problems please try the following:<br/></string>
+    <string name="generalhelpText_p3">- Check if the PiBell is turned on and running in good condition (no over-heating, damage, etc.)<br/><br/></string>
+    <string name="generalhelpText_p4">- Check if both this device and the PiBell are connected to the same wifi network<br/><br/></string>
+    <string name="generalhelpText_p5">- Close the app and restart the PiBell and check the connections again<br/><br/></string>
+    <string name="generalhelpText_p6">If you have any more questions, comments or concerns regarding anything PiBell related, please feel free to reach out to:<br/></string>
+    <string name="generalhelpText_p7">ThePiBellTeam@gmail.com</string>
+    <string name="todo3">TODO</string>
+    <string name="todo7">TODO</string>
+    <string name="help_page_button_Text">Help</string>
+    <string name="fullLine" />
 </resources>

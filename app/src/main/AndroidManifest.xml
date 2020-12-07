@@ -117,7 +117,15 @@
             android:parentActivityName=".GuestHomePage">
         </activity>
 
-        
+        <activity
+            android:name=".adminHelpPage"
+            android:parentActivityName=".SettingsPage">
+        </activity>
+
+        <activity
+            android:name=".guestHelpPage"
+            android:parentActivityName=".GuestSettingsPage">
+        </activity>
 
 
     </application>

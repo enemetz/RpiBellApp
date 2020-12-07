@@ -46,6 +46,7 @@ public class GuestSettingsPage extends AppCompatActivity {
     public Button back;                     // back button on the page
     public Button resetEmail;               // allow user to change email
     public Button newPassword;              // allow user to change password
+    public Button helpPage;                 // allow user to got to help page
     public ToggleButton setNotification;    // toggle button to set notifications on or off
 
     private FirebaseAuth mAuth;             // access to the Firebase Authentication
@@ -145,6 +146,19 @@ public class GuestSettingsPage extends AppCompatActivity {
             // A null listener allows the button to dismiss the dialog and take no further action.
             builder.setNegativeButton(android.R.string.no, null);
             builder.show();
+        });
+
+
+        helpPage = findViewById(R.id.guestHelpPageButton);
+        helpPage.setOnClickListener(task -> {
+            Intent intent = new Intent(this, guestHelpPage.class);
+            intent.putExtra("user", userName);
+            intent.putExtra("IP",IP);
+            intent.putExtra("token", token);
+            intent.putExtra("email",email);
+            intent.putExtra("password",password);
+            startActivity(intent);
+            finish();
         });
 
 
