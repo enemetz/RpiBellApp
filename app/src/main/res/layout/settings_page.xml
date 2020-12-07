@@ -4,19 +4,40 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@drawable/gradient">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+        ...
+
+    </LinearLayout>
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottom_navigation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.998"
+        app:menu="@menu/bottom_navigation_menu" />
 
     <Button
         android:id="@+id/backFromSettingsToHome"
-        android:layout_width="178dp"
-        android:layout_height="64dp"
+        android:layout_width="173dp"
+        android:layout_height="51dp"
         android:text="@string/BackButtonText"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.527"
+        app:layout_constraintHorizontal_bias="0.932"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.941" />
+        app:layout_constraintVertical_bias="0.679" />
 
     <ToggleButton
         android:id="@+id/notificationToggleButton"
@@ -33,6 +54,7 @@
     <TextView
         android:id="@+id/notificationSettingsText"
         android:layout_width="158dp"
+        android:textColor="@color/white"
         android:layout_height="46dp"
         android:text="@string/send_notifications_TEXT"
         android:textAlignment="center"
@@ -48,6 +70,7 @@
         android:id="@+id/PictureCaptureText"
         android:layout_width="158dp"
         android:layout_height="46dp"
+        android:textColor="@color/white"
         android:text="@string/picture_capture_text"
         android:textAlignment="center"
         android:textSize="18sp"
@@ -72,36 +95,37 @@
 
     <Button
         android:id="@+id/ChangeEmailButton"
-        android:layout_width="176dp"
+        android:layout_width="173dp"
         android:layout_height="51dp"
         android:text="@string/change_email_button_text"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.497"
+        app:layout_constraintHorizontal_bias="0.067"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.568" />
+        app:layout_constraintVertical_bias="0.554" />
 
     <Button
         android:id="@+id/adminChangePasswordButton"
         android:layout_width="173dp"
-        android:layout_height="58dp"
-        android:text="@string/change_password_button_text"
+        android:layout_height="51dp"
+        android:text="Change Password"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.932"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.688" />
+        app:layout_constraintVertical_bias="0.554" />
 
     <Button
         android:id="@+id/adminHelpPageButton"
-        android:layout_width="168dp"
-        android:layout_height="52dp"
+        android:layout_width="173dp"
+        android:layout_height="51dp"
         android:text="@string/help_page_button_Text"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.514"
+        app:layout_constraintHorizontal_bias="0.067"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.813" />
+        app:layout_constraintVertical_bias="0.68" />
 </androidx.constraintlayout.widget.ConstraintLayout>

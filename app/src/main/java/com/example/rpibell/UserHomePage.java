@@ -6,15 +6,19 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.util.Log;
+import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SwitchCompat;
 
+import com.google.android.material.bottomnavigation.BottomNavigationMenu;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.google.firebase.auth.FirebaseAuth;
 
@@ -36,7 +40,7 @@ import java.util.concurrent.ExecutionException;
  * This is the UserHomePage class.
  * This is the main page that the user is greeted with once they log in.
  */
-public class UserHomePage extends AppCompatActivity {
+public class  UserHomePage extends AppCompatActivity {
 
     // Global variables
     public TextView welcomeBanner;          // Text at top that will be used in order to greet the user
@@ -68,6 +72,47 @@ public class UserHomePage extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.user_page);
+
+        BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.bottom_navigation);
+        navigation.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener(){
+                    @Override public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                        switch (item.getItemId()) {
+                            case R.id.page_1:
+                                return true;
+                            case R.id.page_2:
+                                try
+                                {
+                                    // tell the server to turn on the live stream, then go to the live stream page
+                                    new turnOnLiveStream().execute(IP);
+                                    SystemClock.sleep(WAIT);    // give the camera at least 2 seconds to warm up
+
+                                    Toast.makeText(UserHomePage.this,"LOADING STREAM..." , Toast.LENGTH_LONG).show();
+                                    Intent intent = new Intent(UserHomePage.this, LiveViewPage.class);
+                                    intent.putExtra("user", userName);
+                                    intent.putExtra("IP",IP);
+                                    intent.putExtra("token", token);
+                                    intent.putExtra("email",email);
+                                    intent.putExtra("password",password);
+                                    startActivity(intent);
+                                } catch (Exception e1) {
+                                    Toast.makeText(UserHomePage.this,"ERROR LOADING STREAM ..." , Toast.LENGTH_LONG).show();
+                                    e1.printStackTrace();
+                                }
+                                return true;
+                            case R.id.page_3:
+                                Intent logout = new Intent(UserHomePage.this, SettingsPage.class);
+                                logout.putExtra("user", userName);
+                                logout.putExtra("IP",IP);
+                                logout.putExtra("token", token);
+                                logout.putExtra("email",email);
+                                logout.putExtra("password",password);
+                                startActivity(logout);
+                                return true;
+                        }
+                        return false;
+                    }
+            });
+
 
         // set the welcome bar at the top of the page to greet the user with their username
         welcomeBanner = findViewById(R.id.UserPageWelcomeTitle);
@@ -160,17 +205,17 @@ public class UserHomePage extends AppCompatActivity {
 
 
         // once the Settings Button is pressed, go to the settings page
-        settings = findViewById(R.id.SettingsButton);
-        settings.setOnClickListener(view -> {
-            Intent intent = new Intent(UserHomePage.this, SettingsPage.class);
-            intent.putExtra("user", userName);
-            intent.putExtra("IP",IP);
-            intent.putExtra("token", token);
-            intent.putExtra("email",email);
-            intent.putExtra("password",password);
-            startActivity(intent);
-            finish();
-        });
+//        settings = findViewById(R.id.SettingsButton);
+//        settings.setOnClickListener(view -> {
+//            Intent intent = new Intent(UserHomePage.this, SettingsPage.class);
+//            intent.putExtra("user", userName);
+//            intent.putExtra("IP",IP);
+//            intent.putExtra("token", token);
+//            intent.putExtra("email",email);
+//            intent.putExtra("password",password);
+//            startActivity(intent);
+//            finish();
+//        });
 
 
 
@@ -334,7 +379,7 @@ public class UserHomePage extends AppCompatActivity {
      * This is the turnOnLiveStream class that will be used to request the raspberry pi device to turn on the live stream.
      * This will be executed in the background.
      */
-    public class turnOnLiveStream extends AsyncTask<String, Integer, String> {
+    public static class turnOnLiveStream extends AsyncTask<String, Integer, String> {
         // Global variables
         public final int RPiDeviceMainServerPort = 9000;
 

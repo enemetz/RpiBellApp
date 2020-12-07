@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/LoginPageTitle"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@drawable/gradient">
 
     <TextView
         android:id="@+id/LoginPageText"
@@ -14,6 +15,7 @@
         android:textAlignment="center"
         android:textSize="36sp"
         android:textStyle="bold"
+        android:textColor="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.503"
@@ -38,7 +40,9 @@
         android:layout_height="62dp"
         android:ems="10"
         android:hint="@string/EmailInputHint"
+        android:textColor="@color/white"
         android:inputType="textEmailAddress"
+        android:textColorHint="#939393"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.516"
@@ -55,6 +59,8 @@
         android:hint="@string/PasswordInputHint"
         android:importantForAutofill="no"
         android:inputType="textPassword"
+        android:textColorHint="#939393"
+        android:textColor="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.539"
@@ -68,6 +74,7 @@
         android:layout_height="wrap_content"
         android:clickable="true"
         android:text="@string/forgot_password_text"
+        android:textColor="#A9A9A9"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"

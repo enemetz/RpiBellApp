@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/LoginPageTitle"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@drawable/gradient">
 
     <Button
         android:id="@+id/SignUpButton"
@@ -15,9 +16,12 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.903" />
+        app:layout_constraintVertical_bias="0.903"
+        app:rippleColor="#C63030"
+        app:strokeColor="#9C4B4B" />
 
     <TextView
+        android:textColor="@color/white"
         android:id="@+id/LoginPageText"
         android:layout_width="389dp"
         android:layout_height="61dp"
@@ -34,7 +38,9 @@
     <EditText
         android:id="@+id/ipInput"
         android:layout_width="314dp"
+        android:textColorHint="#939393"
         android:layout_height="48dp"
+        android:textColor="@color/white"
         android:autofillHints=""
         android:ems="10"
         android:hint="@string/rpi_device_hostname_signup_page_hint"
@@ -48,6 +54,8 @@
     <EditText
         android:id="@+id/emailInput"
         android:layout_width="318dp"
+        android:textColorHint="#939393"
+        android:textColor="@color/white"
         android:layout_height="46dp"
         android:autofillHints=""
         android:ems="10"
@@ -61,6 +69,8 @@
 
     <EditText
         android:id="@+id/pwInput"
+        android:textColor="@color/white"
+        android:textColorHint="#939393"
         android:layout_width="318dp"
         android:layout_height="45dp"
         android:autofillHints=""
@@ -76,6 +86,7 @@
     <EditText
         android:id="@+id/nameInput"
         android:layout_width="317dp"
+        android:textColorHint="#939393"
         android:layout_height="43dp"
         android:autofillHints=""
         android:ems="10"
