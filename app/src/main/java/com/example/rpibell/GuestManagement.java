@@ -2,6 +2,8 @@ package com.example.rpibell;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.util.Log;
@@ -98,6 +100,7 @@ public class GuestManagement extends AppCompatActivity {
                             text.setTextSize(18);
                             text.setPadding(0,50,0,50);
                             text.setText(label);
+                            text.setTextColor(Color.WHITE);
                             linearView.addView(text);
                         }
                     }
