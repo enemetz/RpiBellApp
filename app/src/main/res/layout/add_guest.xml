@@ -4,12 +4,14 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@drawable/gradient">
 
     <TextView
         android:id="@+id/addGuestLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:textColor="@color/white"
         android:text="@string/add_a_guest"
         android:textSize="38sp"
         android:textStyle="bold"
@@ -25,6 +27,8 @@
         android:layout_width="318dp"
         android:layout_height="46dp"
         android:layout_marginTop="36dp"
+        android:textColor="@color/white"
+        android:textColorHint="#939393"
         android:ems="10"
         android:hint="@string/email_address_sign_up_page_hint"
         android:inputType="textEmailAddress"
@@ -39,6 +43,8 @@
         android:layout_width="318dp"
         android:layout_height="46dp"
         android:layout_marginBottom="404dp"
+        android:textColorHint="#939393"
+        android:textColor="@color/white"
         android:ems="10"
         android:hint="@string/name_sign_up_page_hint"
         android:inputType="textPersonName"
@@ -54,6 +60,8 @@
         android:id="@+id/guestPasswordInput"
         android:layout_width="318dp"
         android:layout_height="46dp"
+        android:textColor="@color/white"
+        android:textColorHint="#939393"
         android:ems="10"
         android:hint="@string/password_sign_up_page_hint"
         android:inputType="textPassword"

@@ -6,15 +6,18 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.util.Log;
+import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SwitchCompat;
 
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.google.firebase.auth.FirebaseAuth;
 
@@ -68,6 +71,41 @@ public class UserHomePage extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.user_page);
+        BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.bottom_navigation);
+        navigation.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener(){
+            @Override public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.page_1:
+                        return true;
+                    case R.id.page_2:
+                        // load any new pictures from the PiBell
+                        String[] args = {IP,userName};
+                        new getNewMedia().execute(args);
+                        Toast.makeText(UserHomePage.this,"Loading Media ...", Toast.LENGTH_LONG).show();
+                        SystemClock.sleep(WAIT);
+
+                        // send to the media page
+                        Intent intent = new Intent(UserHomePage.this, MediaPage.class);
+                        intent.putExtra("user", userName);
+                        intent.putExtra("IP",IP);
+                        intent.putExtra("token", token);
+                        intent.putExtra("email",email);
+                        intent.putExtra("password",password);
+                        startActivity(intent);
+                        return true;
+                    case R.id.page_3:
+                        Intent logout = new Intent(UserHomePage.this, SettingsPage.class);
+                        logout.putExtra("user", userName);
+                        logout.putExtra("IP",IP);
+                        logout.putExtra("token", token);
+                        logout.putExtra("email",email);
+                        logout.putExtra("password",password);
+                        startActivity(logout);
+                        return true;
+                }
+                return false;
+            }
+        });
 
         // set the welcome bar at the top of the page to greet the user with their username
         welcomeBanner = findViewById(R.id.UserPageWelcomeTitle);
@@ -149,20 +187,6 @@ public class UserHomePage extends AppCompatActivity {
         manageGuests = findViewById(R.id.manageGuests);
         manageGuests.setOnClickListener(view -> {
             Intent intent = new Intent(UserHomePage.this, GuestManagement.class);
-            intent.putExtra("user", userName);
-            intent.putExtra("IP",IP);
-            intent.putExtra("token", token);
-            intent.putExtra("email",email);
-            intent.putExtra("password",password);
-            startActivity(intent);
-            finish();
-        });
-
-
-        // once the Settings Button is pressed, go to the settings page
-        settings = findViewById(R.id.SettingsButton);
-        settings.setOnClickListener(view -> {
-            Intent intent = new Intent(UserHomePage.this, SettingsPage.class);
             intent.putExtra("user", userName);
             intent.putExtra("IP",IP);
             intent.putExtra("token", token);
@@ -283,24 +307,24 @@ public class UserHomePage extends AppCompatActivity {
 
 
 
-        mediaPage = findViewById(R.id.storedMediaButton);
-        mediaPage.setOnClickListener(view -> {
-            // load any new pictures from the PiBell
-            String[] args = {IP,userName};
-            new getNewMedia().execute(args);
-            Toast.makeText(this,"Loading Media ...", Toast.LENGTH_LONG).show();
-            SystemClock.sleep(WAIT);
-
-            // send to the media page
-            Intent intent = new Intent(UserHomePage.this, MediaPage.class);
-            intent.putExtra("user", userName);
-            intent.putExtra("IP",IP);
-            intent.putExtra("token", token);
-            intent.putExtra("email",email);
-            intent.putExtra("password",password);
-            startActivity(intent);
-            finish();
-        });
+//        mediaPage = findViewById(R.id.storedMediaButton);
+//        mediaPage.setOnClickListener(view -> {
+//            // load any new pictures from the PiBell
+//            String[] args = {IP,userName};
+//            new getNewMedia().execute(args);
+//            Toast.makeText(this,"Loading Media ...", Toast.LENGTH_LONG).show();
+//            SystemClock.sleep(WAIT);
+//
+//            // send to the media page
+//            Intent intent = new Intent(UserHomePage.this, MediaPage.class);
+//            intent.putExtra("user", userName);
+//            intent.putExtra("IP",IP);
+//            intent.putExtra("token", token);
+//            intent.putExtra("email",email);
+//            intent.putExtra("password",password);
+//            startActivity(intent);
+//            finish();
+//        });
 
 
 
@@ -334,7 +358,7 @@ public class UserHomePage extends AppCompatActivity {
      * This is the turnOnLiveStream class that will be used to request the raspberry pi device to turn on the live stream.
      * This will be executed in the background.
      */
-    public class turnOnLiveStream extends AsyncTask<String, Integer, String> {
+    public static class turnOnLiveStream extends AsyncTask<String, Integer, String> {
         // Global variables
         public final int RPiDeviceMainServerPort = 9000;
 

@@ -3,7 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@drawable/gradient">
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/PicsPageBackButton"
@@ -54,6 +55,7 @@
         android:id="@+id/MediaPageTitle"
         android:layout_width="92dp"
         android:layout_height="35dp"
+        android:textColor="@color/white"
         android:text="@string/media_page_title_text"
         android:textAlignment="center"
         android:textSize="24sp"

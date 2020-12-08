@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -123,7 +124,9 @@ public class MediaPage extends AppCompatActivity {
 
             CheckBox checkBox = new CheckBox(getApplicationContext());
             checkBox.setText(file.getName().substring(0,file.getName().length()-4));
+            checkBox.setTextColor(Color.WHITE);
             checkBox.setPadding(200,0,0,0);
+            checkBox.setHighlightColor(Color.WHITE);
 
             checkBox.setOnClickListener(task -> {
                 if (checkBox.isChecked()) {

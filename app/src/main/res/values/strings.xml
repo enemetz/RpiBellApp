@@ -87,4 +87,8 @@
     <string name="todo7">TODO</string>
     <string name="help_page_button_Text">Help</string>
     <string name="fullLine" />
+    <string name="Settings">Settings</string>
+    <string name="Camera">Camera</string>
+    <string name="home">Home</string>
+    <string name="media">Media</string>
 </resources>

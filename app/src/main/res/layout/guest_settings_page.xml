@@ -3,7 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@drawable/gradient">
 
     <Button
         android:id="@+id/guestEmailChange"
@@ -23,7 +24,7 @@
         android:id="@+id/guestPasswordChange"
         android:layout_width="236dp"
         android:layout_height="52dp"
-        android:text="@string/change_password_button_text"
+        android:text="Change password"
         android:textAllCaps="false"
         app:icon="@android:drawable/ic_partial_secure"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -62,6 +63,7 @@
 
     <TextView
         android:id="@+id/textView10"
+        android:textColor="@color/white"
         android:layout_width="205dp"
         android:layout_height="59dp"
         android:text="@string/push_notifications_text"

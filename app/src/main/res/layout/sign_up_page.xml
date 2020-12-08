@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/LoginPageTitle"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@drawable/gradient">
 
     <Button
         android:id="@+id/SignUpButton"
@@ -21,6 +22,7 @@
         android:id="@+id/LoginPageText"
         android:layout_width="389dp"
         android:layout_height="61dp"
+        android:textColor="@color/white"
         android:text="@string/pibell_sign_up_title_text"
         android:textAlignment="center"
         android:textSize="38sp"
@@ -43,12 +45,16 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        android:textColorHint="#A9A9A9"
+        android:textColor="@color/white"
         app:layout_constraintVertical_bias="0.755" />
 
     <EditText
         android:id="@+id/emailInput"
         android:layout_width="318dp"
         android:layout_height="46dp"
+        android:textColorHint="#A9A9A9"
+        android:textColor="@color/white"
         android:autofillHints=""
         android:ems="10"
         android:hint="@string/email_address_sign_up_page_hint"
@@ -69,6 +75,8 @@
         android:inputType="textPassword"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        android:textColorHint="#A9A9A9"
+        android:textColor="@color/white"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.609" />
@@ -78,6 +86,8 @@
         android:layout_width="317dp"
         android:layout_height="43dp"
         android:autofillHints=""
+        android:textColorHint="#A9A9A9"
+        android:textColor="@color/white"
         android:ems="10"
         android:hint="@string/name_sign_up_page_hint"
         android:inputType="textPersonName"

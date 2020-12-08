@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.os.SystemClock;
 import android.text.InputType;
 import android.util.Log;
+import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -22,6 +23,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
@@ -63,6 +65,7 @@ public class SettingsPage extends AppCompatActivity {
 
     private FirebaseAuth mAuth;             // access the Firebase Authentication
     private FirebaseFirestore db;           // access the Firebase Firestore Database
+    public final int WAIT = 2000;           // amount of time to pause the app in order to give Raspberry Pi Camera time to warm up
 
     /**
      * This method will be used in order to set up the Settings Page.
@@ -73,6 +76,51 @@ public class SettingsPage extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.settings_page);
+        BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.bottom_navigation);
+        navigation.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener(){
+            @Override public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.page_1:
+                        try
+                        {
+                            Intent intent = new Intent(SettingsPage.this, UserHomePage.class);
+                            intent.putExtra("user", userName);
+                            intent.putExtra("IP",IP);
+                            intent.putExtra("token", token);
+                            intent.putExtra("email",email);
+                            intent.putExtra("password",password);
+                            startActivity(intent);
+                            finish();
+                        } catch (Exception e1) {
+                            e1.printStackTrace();
+                        }
+                        return true;
+                    case R.id.page_2:
+                        try
+                        {
+                            // tell the server to turn on the live stream, then go to the live stream page
+                            new UserHomePage.turnOnLiveStream().execute(IP);
+                            SystemClock.sleep(WAIT);    // give the camera at least 2 seconds to warm up
+
+                            Toast.makeText(SettingsPage.this,"LOADING STREAM..." , Toast.LENGTH_LONG).show();
+                            Intent intent = new Intent(SettingsPage.this, LiveViewPage.class);
+                            intent.putExtra("user", userName);
+                            intent.putExtra("IP",IP);
+                            intent.putExtra("token", token);
+                            intent.putExtra("email",email);
+                            intent.putExtra("password",password);
+                            startActivity(intent);
+                        } catch (Exception e1) {
+                            Toast.makeText(SettingsPage.this,"ERROR LOADING STREAM ..." , Toast.LENGTH_LONG).show();
+                            e1.printStackTrace();
+                        }
+                        return true;
+                    case R.id.page_3:
+                        return true;
+                }
+                return false;
+            }
+        });
 
         // get all the data from the last Activity
         IP = getIntent().getExtras().getString("IP");
@@ -177,22 +225,22 @@ public class SettingsPage extends AppCompatActivity {
 
 
         // once the back button is pressed, request the raspberry pi to end the live stream and then take the user back to the homepage
-        back = this.<Button>findViewById(R.id.backFromSettingsToHome);
-        back.setOnClickListener(view -> {
-            try
-            {
-                Intent intent = new Intent(SettingsPage.this, UserHomePage.class);
-                intent.putExtra("user", userName);
-                intent.putExtra("IP",IP);
-                intent.putExtra("token", token);
-                intent.putExtra("email",email);
-                intent.putExtra("password",password);
-                startActivity(intent);
-                finish();
-            } catch (Exception e1) {
-                e1.printStackTrace();
-            }
-        });
+//        back = this.<Button>findViewById(R.id.backFromSettingsToHome);
+//        back.setOnClickListener(view -> {
+//            try
+//            {
+//                Intent intent = new Intent(SettingsPage.this, UserHomePage.class);
+//                intent.putExtra("user", userName);
+//                intent.putExtra("IP",IP);
+//                intent.putExtra("token", token);
+//                intent.putExtra("email",email);
+//                intent.putExtra("password",password);
+//                startActivity(intent);
+//                finish();
+//            } catch (Exception e1) {
+//                e1.printStackTrace();
+//            }
+//        });
 
 
 

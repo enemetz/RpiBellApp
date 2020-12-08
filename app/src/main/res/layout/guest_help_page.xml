@@ -4,13 +4,15 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@drawable/gradient">
 
     <TextView
         android:id="@+id/helpPageTitle"
         android:layout_width="209dp"
         android:layout_height="41dp"
-        android:text="@string/help_page_title_Text"
+        android:text="Help"
+        android:textColor="@color/white"
         android:textAlignment="center"
         android:textSize="24sp"
         android:textStyle="bold"
@@ -25,7 +27,8 @@
         android:id="@+id/helpPageConnectionStatusLabel"
         android:layout_width="143dp"
         android:layout_height="52dp"
-        android:text="@string/connection_status_label_text"
+        android:textColor="@color/white"
+        android:text="Connection Status"
         android:textAlignment="center"
         android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -39,6 +42,7 @@
         android:id="@+id/GuesthelpPageCurrentConnectionStatus"
         android:layout_width="143dp"
         android:layout_height="52dp"
+        android:textColor="@color/teal_200"
         android:textAlignment="center"
         android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -80,6 +84,7 @@
                 android:id="@+id/generalHelpTextP1"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:textColor="@color/white"
                 android:text="@string/generalhelpText_p1"
                 android:textAlignment="center"
                 android:textSize="18sp" />
@@ -93,6 +98,7 @@
             <TextView
                 android:id="@+id/generalHelpTextP2"
                 android:layout_width="match_parent"
+                android:textColor="@color/white"
                 android:layout_height="wrap_content"
                 android:text="@string/generalhelpText_p2"
                 android:textSize="18sp" />
@@ -101,6 +107,7 @@
                 android:id="@+id/generalHelpTextP3"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:textColor="@color/white"
                 android:text="@string/generalhelpText_p3"
                 android:textSize="18sp" />
 
@@ -113,6 +120,7 @@
             <TextView
                 android:id="@+id/generalHelpTextP4"
                 android:layout_width="match_parent"
+                android:textColor="@color/white"
                 android:layout_height="wrap_content"
                 android:text="@string/generalhelpText_p4"
                 android:textSize="18sp" />
@@ -120,12 +128,14 @@
             <TextView
                 android:id="@+id/textView8"
                 android:layout_width="match_parent"
+                android:textColor="@color/white"
                 android:layout_height="wrap_content"
                 android:text="@string/fullLine" />
 
             <TextView
                 android:id="@+id/generalHelpTextP5"
                 android:layout_width="match_parent"
+                android:textColor="@color/white"
                 android:layout_height="wrap_content"
                 android:text="@string/generalhelpText_p5"
                 android:textSize="18sp" />
@@ -133,12 +143,14 @@
             <TextView
                 android:id="@+id/textView9"
                 android:layout_width="match_parent"
+                android:textColor="@color/white"
                 android:layout_height="wrap_content"
                 android:text="@string/fullLine" />
 
             <TextView
                 android:id="@+id/generalHelpTextP6"
                 android:layout_width="match_parent"
+                android:textColor="@color/white"
                 android:layout_height="wrap_content"
                 android:text="@string/generalhelpText_p6"
                 android:textSize="18sp" />
@@ -146,6 +158,7 @@
             <TextView
                 android:id="@+id/generalHelpTextP7"
                 android:layout_width="match_parent"
+                android:textColor="@color/white"
                 android:layout_height="wrap_content"
                 android:text="@string/generalhelpText_p7"
                 android:textSize="18sp" />

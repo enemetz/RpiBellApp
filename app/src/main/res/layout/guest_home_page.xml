@@ -3,25 +3,28 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@drawable/gradient">
 
     <TextView
         android:id="@+id/guestWelcomePageBanner"
         android:layout_width="360dp"
         android:layout_height="49dp"
         android:textAlignment="center"
+        android:textColor="@color/white"
         android:textSize="24sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.49"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.007" />
+        app:layout_constraintVertical_bias="0.086" />
 
     <Button
         android:id="@+id/guestSettingsButton"
         android:layout_width="236dp"
         android:layout_height="52dp"
-        android:text="@string/guest_home_page_settings_button_text"
+        android:text="Settings"
         android:textAllCaps="false"
         app:icon="@android:drawable/ic_menu_manage"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -34,7 +37,7 @@
         android:id="@+id/notificationLogButton"
         android:layout_width="236dp"
         android:layout_height="52dp"
-        android:text="@string/guest_home_page_notification_log_text"
+        android:text="Notifications"
         android:textAllCaps="false"
         app:icon="@android:drawable/ic_lock_idle_alarm"
         app:layout_constraintBottom_toBottomOf="parent"

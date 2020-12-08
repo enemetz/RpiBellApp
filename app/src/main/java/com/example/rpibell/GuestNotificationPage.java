@@ -2,6 +2,7 @@ package com.example.rpibell;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
@@ -86,6 +87,7 @@ public class GuestNotificationPage extends AppCompatActivity {
                 TextView text = new TextView(this);
                 text.setTextSize(18);
                 text.setPadding(30,50,0,50);
+                text.setTextColor(Color.WHITE);
                 text.setText(file.getName().substring(0,file.getName().length()-4));
                 linearView.addView(text);
             }

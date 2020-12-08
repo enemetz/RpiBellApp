@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".GuestManagement">
+    tools:context=".GuestManagement"
+    android:background="@drawable/gradient">
 
     <ScrollView
         android:id="@+id/scrollView2"
@@ -25,18 +26,19 @@
 
     <TextView
         android:id="@+id/textView"
-        android:layout_width="176dp"
-        android:layout_height="29dp"
-        android:text="@string/manage_guests"
+        android:layout_width="219dp"
+        android:layout_height="53dp"
+        android:text="Current Guests"
         android:textAlignment="center"
-        android:textSize="18sp"
+        android:textColor="@color/white"
+        android:textSize="30sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.075"
+        app:layout_constraintHorizontal_bias="0.093"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.031" />
+        app:layout_constraintVertical_bias="0.026" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/backButtonManageGuestPage"
