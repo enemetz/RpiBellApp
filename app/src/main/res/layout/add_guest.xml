@@ -85,15 +85,18 @@
         app:layout_constraintTop_toBottomOf="@+id/guestPasswordInput"
         app:layout_constraintVertical_bias="0.428" />
 
-    <Button
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/goBack"
-        android:layout_width="318dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/BackButtonText"
+        android:clickable="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.494"
+        app:layout_constraintHorizontal_bias="0.045"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/addGuestBtn"
-        app:layout_constraintVertical_bias="0.184" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.973"
+        app:srcCompat="@drawable/abc_vector_test"
+        android:contentDescription="@string/todo" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

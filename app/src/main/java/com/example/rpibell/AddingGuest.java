@@ -16,6 +16,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -36,7 +37,8 @@ public class AddingGuest extends AppCompatActivity {
     public String email;                                    // user's email
     public String password;                                 // user's password
 
-    public Button addGuestBtn, goBack;                      // add a guest and back button
+    public Button addGuestBtn;                              // add a guest
+    public FloatingActionButton goBack;                     // back button for the activity
     public EditText guestName, guestEmail, guestPassword;   // Sign-up fields
     public String hostname;
 

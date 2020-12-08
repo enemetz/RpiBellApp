@@ -95,7 +95,7 @@ public class GuestManagement extends AppCompatActivity {
                         Toast.makeText(getApplicationContext(), "NO ADDED GUESTS", Toast.LENGTH_LONG).show();
                     } else {
                         for (Guest guest : guests) {
-                            String label = guest.name + " , " + guest.email;
+                            String label = guest.name + "\n" + guest.email;
                             TextView text = new TextView(this);
                             text.setTextSize(18);
                             text.setPadding(0,50,0,50);

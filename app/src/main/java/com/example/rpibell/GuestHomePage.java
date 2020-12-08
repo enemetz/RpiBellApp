@@ -269,7 +269,8 @@ public class GuestHomePage extends AppCompatActivity {
 
             try {
                 // set local variables
-                Socket socket=new Socket(params[0],RPiDeviceMainServerPort);
+                Socket socket = new Socket();
+                socket.connect(new InetSocketAddress(params[0],RPiDeviceMainServerPort),2000);
                 DataOutputStream dout=new DataOutputStream(socket.getOutputStream());
                 DataInputStream din=new DataInputStream(socket.getInputStream());
 

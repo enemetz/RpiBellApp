@@ -26,6 +26,8 @@ import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
@@ -46,7 +48,7 @@ import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 public class LiveViewPage extends AppCompatActivity {
 
     // Global variables
-    public Button backButton;                       // back button on the page
+    public FloatingActionButton backButton;         // back button for the page
     public Button picButton;                        // button used to take pic during live stream
 
     public WebView liveCam;                         // web viewer on the page
@@ -89,7 +91,7 @@ public class LiveViewPage extends AppCompatActivity {
         liveCam.loadUrl(url);
 
         // once the back button is pressed, request the raspberry pi to end the live stream and then take the user back to the homepage
-        backButton = this.<Button>findViewById(R.id.GoBackButtonLiveToHomePage);
+        backButton = findViewById(R.id.GoBackButtonLiveToHomePage);
         backButton.setOnClickListener(view -> {
             try
             {

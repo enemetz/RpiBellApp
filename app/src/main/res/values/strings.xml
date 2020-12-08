@@ -22,8 +22,8 @@
     <string name="name_sign_up_page_hint">Name</string>
     <string name="password_sign_up_page_hint">Password (At least 6 characters)</string>
     <string name="clear_pics_button_text">CLEAR</string>
-    <string name="media_page_title_text">MEDIA</string>
-    <string name="notifications_page_title_text">NOTIFICATIONS</string>
+    <string name="media_page_title_text">Media</string>
+    <string name="notifications_page_title_text">Message History</string>
     <string name="notifications_button_text">NOTIFICATIONS</string>
     <string name="picture_capture_text">PICTURE CAPTURE</string>
 
@@ -91,4 +91,10 @@
     <string name="Camera">Camera</string>
     <string name="home">Home</string>
     <string name="media">Media</string>
+    <string name="settings_bold_text">Settings</string>
+    <string name="todo23456789">TODO</string>
+    <string name="todo322222222222222222222222">TODO</string>
+    <string name="message_history_text">message history</string>
+    <string name="arm_disarm_pibell_text">Arm/Disarm PiBell</string>
+    <string name="todowwww">TODOwwww</string>
 </resources>

@@ -34,6 +34,7 @@ import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -96,24 +97,20 @@ public class SettingsPage extends AppCompatActivity {
                         }
                         return true;
                     case R.id.page_2:
-                        try
-                        {
-                            // tell the server to turn on the live stream, then go to the live stream page
-                            new UserHomePage.turnOnLiveStream().execute(IP);
-                            SystemClock.sleep(WAIT);    // give the camera at least 2 seconds to warm up
+                        // load any new pictures from the PiBell
+                        String[] args = {IP,userName};
+                        new getNewMedia().execute(args);
+                        Toast.makeText(SettingsPage.this,"Loading Media ...", Toast.LENGTH_LONG).show();
+                        SystemClock.sleep(WAIT);
 
-                            Toast.makeText(SettingsPage.this,"LOADING STREAM..." , Toast.LENGTH_LONG).show();
-                            Intent intent = new Intent(SettingsPage.this, LiveViewPage.class);
-                            intent.putExtra("user", userName);
-                            intent.putExtra("IP",IP);
-                            intent.putExtra("token", token);
-                            intent.putExtra("email",email);
-                            intent.putExtra("password",password);
-                            startActivity(intent);
-                        } catch (Exception e1) {
-                            Toast.makeText(SettingsPage.this,"ERROR LOADING STREAM ..." , Toast.LENGTH_LONG).show();
-                            e1.printStackTrace();
-                        }
+                        // send to the media page
+                        Intent intent = new Intent(SettingsPage.this, MediaPage.class);
+                        intent.putExtra("user", userName);
+                        intent.putExtra("IP",IP);
+                        intent.putExtra("token", token);
+                        intent.putExtra("email",email);
+                        intent.putExtra("password",password);
+                        startActivity(intent);
                         return true;
                     case R.id.page_3:
                         return true;
@@ -846,5 +843,106 @@ public class SettingsPage extends AppCompatActivity {
             }
         } // ends the doInBackground() method
     } // ends the writePicCapNO class
+
+
+
+    /**
+     * This is the getNewMedia class that will be used to request the raspberry pi device to send over any new pictures
+     * that were taken.
+     */
+    public class getNewMedia extends AsyncTask<String, Integer, String> {
+        // Global variables
+        public final int RPiDeviceMainServerPort = 9000;
+
+        /**
+         * This method will be used in order to request the main server on the device to send over any new pictures.
+         * @param params the IP address of the raspberry pi device
+         * @return null since nothing else is needed
+         */
+        @Override
+        protected String doInBackground(String[] params) {
+
+            Context context = getApplicationContext();
+
+            try {
+                // set local variables
+                Socket socket = new Socket();
+                socket.connect(new InetSocketAddress(params[0],RPiDeviceMainServerPort),2000);
+                DataOutputStream dout=new DataOutputStream(socket.getOutputStream());
+                DataInputStream din=new DataInputStream(socket.getInputStream());
+
+                // tell the server to end the live
+                dout.writeUTF("Send Pics");
+                dout.flush();
+
+                // server responds : number of pics
+                String numberOfPics = din.readUTF();
+                Log.e("NUM PICS",numberOfPics);
+
+                // say OK
+                dout.writeUTF("OK");
+                dout.flush();
+
+                // now server will send those pics here
+                int num = Integer.parseInt(numberOfPics);
+                for (int i = 1 ; i <= num ; ++i) {
+                    // get the name of the pic and create file
+                    String picName = din.readUTF();
+                    Log.e("PIC NAME",picName);
+
+                    // say OK
+                    dout.writeUTF("OK");
+                    dout.flush();
+
+                    // get the size of the file
+                    String picSize = din.readUTF();
+                    Log.e("PIC SIZE",picSize);
+
+                    // say OK
+                    dout.writeUTF("OK");
+                    dout.flush();
+
+                    // get new pic file ready
+                    File dir = context.getDir(params[1], Context.MODE_PRIVATE);         //Creating an internal dir;
+                    File file = new File(dir, picName);                                 //Getting a file within the dir.
+                    FileOutputStream filePtr = new FileOutputStream(file);
+
+                    Log.e("fileMade","" + file.getName());
+
+                    // copy the bytes to buffer
+                    int count;
+                    int fileSize = Integer.parseInt(picSize);
+                    byte[] buffer = new byte[4096]; // or 4096, or more
+                    while ((count = din.read(buffer)) > 0)
+                    {
+                        fileSize -= count;
+                        if (fileSize <= 0) {
+                            break;
+                        }
+                        filePtr.write(buffer, 0, count);
+                    } // ends the while-loop
+                    Log.e("status","File received");
+
+                    // write the bytes into the file and the CLOSE it
+                    filePtr.close();
+
+                    // say OK
+                    dout.writeUTF("OK");
+                    dout.flush();
+                } // ends the for-loop
+
+                // server sends last OK
+                din.readUTF();
+
+                // close all
+                dout.close();
+                din.close();
+                socket.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return null;
+        } // ends the doInBackground() method
+    } // ends the getNewMedia class
 
 } // ends the SettingsPage class
