@@ -39,6 +39,19 @@
             android:orientation="vertical" />
     </ScrollView>
 
+
+    <Button
+        android:id="@+id/RefreshPicsButton"
+        android:layout_width="119dp"
+        android:layout_height="42dp"
+        android:text="@string/refresh_button_text"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.962"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.025" />
+
     <Button
         android:id="@+id/DeletePicsButton"
         android:layout_width="119dp"
@@ -46,10 +59,10 @@
         android:text="@string/clear_pics_button_text"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.945"
+        app:layout_constraintHorizontal_bias="0.962"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.956" />
+        app:layout_constraintVertical_bias="0.972" />
 
     <TextView
         android:id="@+id/MediaPageTitle"

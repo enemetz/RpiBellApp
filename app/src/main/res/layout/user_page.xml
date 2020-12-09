@@ -57,6 +57,7 @@
         android:text="@string/arm_disarm_pibell_text"
         android:textAlignment="center"
         android:textColor="@color/white"
+        android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

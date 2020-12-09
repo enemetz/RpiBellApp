@@ -97,4 +97,8 @@
     <string name="message_history_text">message history</string>
     <string name="arm_disarm_pibell_text">Arm/Disarm PiBell</string>
     <string name="todowwww">TODOwwww</string>
+    <string name="help_page_text_title">Help Page</string>
+    <string name="connection_status_text_label">Connection Status</string>
+    <string name="refresh_button_text">Refresh</string>
+    <string name="change_password_button_test_guest">Change password</string>
 </resources>

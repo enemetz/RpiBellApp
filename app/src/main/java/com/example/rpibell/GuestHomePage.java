@@ -124,7 +124,7 @@ public class GuestHomePage extends AppCompatActivity {
             // load any new notifications from PiBell
             String[] args = {IP,userName};
             new getNewNotifications().execute(args);
-            Toast.makeText(this,"Loading Past Notifications ...", Toast.LENGTH_LONG).show();
+            Toast.makeText(this,"Loading Message Logs ...", Toast.LENGTH_LONG).show();
             SystemClock.sleep(WAIT);
 
             // send to the notification page
