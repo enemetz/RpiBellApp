@@ -5,9 +5,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.appcompat.app.AppCompatActivity;
-
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -15,6 +13,9 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+/**
+ * This is the AdminInfoPage that is used to display all the current guests of the admin.
+ */
 public class AdminInfoPage extends AppCompatActivity {
     // Global variables
     public String userName;                         // current user
@@ -83,6 +84,5 @@ public class AdminInfoPage extends AppCompatActivity {
                 Toast.makeText(this,"EXPERIENCING CONNECTION ISSUES. TRY AGAIN ...",Toast.LENGTH_LONG).show();
             }
         });
-
     } // ends onCreate()
 } // ends AdminInfoPage class

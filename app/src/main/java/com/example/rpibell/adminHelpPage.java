@@ -12,6 +12,10 @@ import java.io.DataOutputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 
+/**
+ * This is the adminHelpPage class which is used to help the admin figure out any connection
+ * issues between the app and the PiBell.
+ */
 public class adminHelpPage extends AppCompatActivity {
     // Global variables
     public String userName;                 // current user
@@ -33,6 +37,7 @@ public class adminHelpPage extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.admin_help_page);
 
+
         // get all the data from the last Activity
         IP = getIntent().getExtras().getString("IP");
         userName = getIntent().getExtras().getString("user");
@@ -41,9 +46,8 @@ public class adminHelpPage extends AppCompatActivity {
         password = getIntent().getExtras().getString("password");
 
 
-
-        currentStatus = findViewById(R.id.helpPageCurrentConnectionStatus);
         // update the connection status
+        currentStatus = findViewById(R.id.helpPageCurrentConnectionStatus);
         try {
             String getConStatus = new isConnected().execute(IP).get();
             currentStatus.setText(getConStatus);
@@ -54,8 +58,7 @@ public class adminHelpPage extends AppCompatActivity {
         }
 
 
-
-
+        // button used to check and update the connection status
         retryButton = findViewById(R.id.helpPageRetryButton);
         retryButton.setOnClickListener(task -> {
             try {
@@ -69,10 +72,7 @@ public class adminHelpPage extends AppCompatActivity {
         });
 
 
-
-
-
-
+        // go back to the admin's setting page
         backButton = findViewById(R.id.adminHelpPageBackButton);
         backButton.setOnClickListener(task -> {
             Intent intent = new Intent(this, SettingsPage.class);
@@ -127,4 +127,4 @@ public class adminHelpPage extends AppCompatActivity {
         } // ends the doInBackground() method
     } // ends the isConnected class
 
-}
+} // ends the class

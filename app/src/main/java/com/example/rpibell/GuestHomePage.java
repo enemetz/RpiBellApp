@@ -7,14 +7,10 @@ import android.os.Bundle;
 import android.os.SystemClock;
 import android.util.Log;
 import android.widget.Button;
-import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.appcompat.app.AppCompatActivity;
-
 import com.google.firebase.auth.FirebaseAuth;
-
 import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -24,8 +20,11 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
-import java.util.concurrent.ExecutionException;
 
+/**
+ * This is the GuestHomePage class. This will be the page that the guest is greeted with after
+ * successfully signing in.
+ */
 public class GuestHomePage extends AppCompatActivity {
     // Global variables
     public TextView welcomeBanner;         // Text at top that will be used in order to greet the user
@@ -58,14 +57,10 @@ public class GuestHomePage extends AppCompatActivity {
         userName = getIntent().getExtras().getString("user");
         welcomeBanner.append("Welcome, " + userName);
 
-        // set/save the IP address of the user's Raspberry Pi device
+        // get all the info from the last Activity
         IP = getIntent().getExtras().getString("IP");
-
-        // get the token
         token = getIntent().getExtras().getString("token");
-
         email = getIntent().getExtras().getString("email");
-
         password = getIntent().getExtras().getString("password");
 
 
@@ -118,7 +113,7 @@ public class GuestHomePage extends AppCompatActivity {
         });
 
 
-
+        // show the guest the message logs
         notificationPage = findViewById(R.id.notificationLogButton);
         notificationPage.setOnClickListener(task -> {
             // load any new notifications from PiBell

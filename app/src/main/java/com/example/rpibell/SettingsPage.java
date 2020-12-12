@@ -2,7 +2,6 @@ package com.example.rpibell;
 
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -12,24 +11,15 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-
 import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -38,15 +28,13 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
-import java.net.UnknownHostException;
-import java.util.concurrent.ExecutionException;
 
 /**
  * This is the SettingsPage class.
- * This is the settings page where the user will have the ability to change the notification settings or settings on the raspberry pi.
+ * This is the settings page where the user will have the ability to change the
+ * notification settings or settings on the PiBell.
  */
 public class SettingsPage extends AppCompatActivity {
 
@@ -74,9 +62,10 @@ public class SettingsPage extends AppCompatActivity {
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.settings_page);
+
+        // set up the Navigation Bar on the bottom
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.bottom_navigation);
         navigation.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener(){
             @Override public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -126,10 +115,11 @@ public class SettingsPage extends AppCompatActivity {
         email = getIntent().getExtras().getString("email");
         password = getIntent().getExtras().getString("password");
 
+        // connect to Firebase
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
 
-        //Gets the current user
+        // allow user to change their email
         final FirebaseUser user = mAuth.getCurrentUser();
         resetEmail = findViewById(R.id.ChangeEmailButton);
         resetEmail.setOnClickListener(view -> {
@@ -168,7 +158,7 @@ public class SettingsPage extends AppCompatActivity {
             builder.show();
         });
 
-
+        // allow user to change their password
         changePassword = findViewById(R.id.adminChangePasswordButton);
         changePassword.setOnClickListener(view -> {
             // Creates an alert to get text from the user to change their email
@@ -206,7 +196,7 @@ public class SettingsPage extends AppCompatActivity {
             builder.show();
         });
 
-
+        // allow user to go to the help page when they need to check connection status and have questions
         helpPageButton = findViewById(R.id.adminHelpPageButton);
         helpPageButton.setOnClickListener(task -> {
             Intent intent = new Intent(this, adminHelpPage.class);
@@ -218,27 +208,6 @@ public class SettingsPage extends AppCompatActivity {
             startActivity(intent);
             finish();
         });
-
-
-
-        // once the back button is pressed, request the raspberry pi to end the live stream and then take the user back to the homepage
-//        back = this.<Button>findViewById(R.id.backFromSettingsToHome);
-//        back.setOnClickListener(view -> {
-//            try
-//            {
-//                Intent intent = new Intent(SettingsPage.this, UserHomePage.class);
-//                intent.putExtra("user", userName);
-//                intent.putExtra("IP",IP);
-//                intent.putExtra("token", token);
-//                intent.putExtra("email",email);
-//                intent.putExtra("password",password);
-//                startActivity(intent);
-//                finish();
-//            } catch (Exception e1) {
-//                e1.printStackTrace();
-//            }
-//        });
-
 
 
         // go through Notification.txt and check if the user wants notifications or not
@@ -256,7 +225,7 @@ public class SettingsPage extends AppCompatActivity {
             setNotification.setChecked(false);
         }
 
-        // once the switch is turned on, the RPi Device must try to detect for motion and send notifications (if the user wants that)
+        // notification button was toggled on/off, make the appropriate changes
         setNotification = findViewById(R.id.notificationToggleButton);
         setNotification.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if(isChecked){
@@ -295,10 +264,7 @@ public class SettingsPage extends AppCompatActivity {
             }
         });
 
-
-
-
-
+        // check if the current user needs notifications sent to the device or not
         String wantPicCap = null;
         try{
             wantPicCap = new wantPicCapture().execute(userName).get();
@@ -313,6 +279,7 @@ public class SettingsPage extends AppCompatActivity {
             setPictureCapture.setChecked(false);
         }
 
+        // pic capture button was toggled on/off make the appropriate changes
         setPictureCapture = findViewById(R.id.pictureCaptureToggleButton);
         setPictureCapture.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if(isChecked){
@@ -349,7 +316,6 @@ public class SettingsPage extends AppCompatActivity {
                 }
             }
         });
-
 
 
     } // ends the onCreate() method

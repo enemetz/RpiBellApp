@@ -12,15 +12,9 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.appcompat.app.AppCompatActivity;
-
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.firebase.FirebaseApp;
-import com.google.firebase.auth.FirebaseAuth;
-
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
@@ -31,6 +25,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 
+/**
+ * This is the GuestNotificationPage Class where the guest will have the ability to view all the past
+ * notifications that they have received.
+ */
 public class GuestNotificationPage extends AppCompatActivity {
     // Global variables
     public String userName;                 // current user
@@ -54,7 +52,6 @@ public class GuestNotificationPage extends AppCompatActivity {
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.guest_notification_page);
 
@@ -100,6 +97,7 @@ public class GuestNotificationPage extends AppCompatActivity {
         });
 
 
+        // get any new message logs from the server
         refreshButton = findViewById(R.id.GuestRefreshNotificsButton);
         refreshButton.setOnClickListener(refresh -> {
             // load any new notifications from PiBell
@@ -150,6 +148,7 @@ public class GuestNotificationPage extends AppCompatActivity {
             Toast.makeText(getApplicationContext(), "NO SAVED MESSAGE LOGS", Toast.LENGTH_LONG).show();
         }
 
+        // display each message timestamp one by one
         for (File file : files) {
             if (!file.getName().equals("Notification.txt")) {
                 Log.e("file",file.getName());
@@ -257,4 +256,4 @@ public class GuestNotificationPage extends AppCompatActivity {
         } // ends method
     } // ends the getNewNotifications class
 
-}
+} // ends the class

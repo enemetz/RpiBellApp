@@ -8,19 +8,13 @@ import android.os.SystemClock;
 import android.util.Log;
 import android.view.MenuItem;
 import android.widget.Button;
-import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.SwitchCompat;
-
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.google.firebase.auth.FirebaseAuth;
-
 import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -29,10 +23,8 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
-import java.net.UnknownHostException;
 import java.util.concurrent.ExecutionException;
 
 /**
@@ -68,9 +60,10 @@ public class UserHomePage extends AppCompatActivity {
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.user_page);
+
+        // set up the navigation bar on the bottom
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.bottom_navigation);
         navigation.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener(){
             @Override public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -92,6 +85,7 @@ public class UserHomePage extends AppCompatActivity {
                         intent.putExtra("email",email);
                         intent.putExtra("password",password);
                         startActivity(intent);
+                        finish();
                         return true;
                     case R.id.page_3:
                         Intent logout = new Intent(UserHomePage.this, SettingsPage.class);
@@ -101,6 +95,7 @@ public class UserHomePage extends AppCompatActivity {
                         logout.putExtra("email",email);
                         logout.putExtra("password",password);
                         startActivity(logout);
+                        finish();
                         return true;
                 }
                 return false;
@@ -304,31 +299,7 @@ public class UserHomePage extends AppCompatActivity {
             }
         });
 
-
-
-
-//        mediaPage = findViewById(R.id.storedMediaButton);
-//        mediaPage.setOnClickListener(view -> {
-//            // load any new pictures from the PiBell
-//            String[] args = {IP,userName};
-//            new getNewMedia().execute(args);
-//            Toast.makeText(this,"Loading Media ...", Toast.LENGTH_LONG).show();
-//            SystemClock.sleep(WAIT);
-//
-//            // send to the media page
-//            Intent intent = new Intent(UserHomePage.this, MediaPage.class);
-//            intent.putExtra("user", userName);
-//            intent.putExtra("IP",IP);
-//            intent.putExtra("token", token);
-//            intent.putExtra("email",email);
-//            intent.putExtra("password",password);
-//            startActivity(intent);
-//            finish();
-//        });
-
-
-
-
+        // allow the admin to view their saved message logs
         notificationPage = findViewById(R.id.notificationsButton);
         notificationPage.setOnClickListener(task -> {
             // load any new notifications from PiBell
@@ -1062,7 +1033,5 @@ public class UserHomePage extends AppCompatActivity {
             }
         } // ends the doInBackground() method
     } // ends the turnPictureCaptureOFF class
-
-
 
 } // ends the UserHomePage class

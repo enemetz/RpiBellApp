@@ -2,8 +2,6 @@ package com.example.rpibell;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -12,18 +10,13 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
-
 import androidx.appcompat.app.AppCompatActivity;
-
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.net.InetSocketAddress;
 import java.net.Socket;
@@ -31,6 +24,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 
+/**
+ * This is the NotificationPage class that shows the admin user all the received and saved
+ * message logs (notifications).
+ */
 public class NotificationPage extends AppCompatActivity {
     // Global variables
     public String userName;                 // current user
@@ -53,7 +50,6 @@ public class NotificationPage extends AppCompatActivity {
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.notifications_page);
 
@@ -117,7 +113,7 @@ public class NotificationPage extends AppCompatActivity {
             }
         });
 
-
+        // obtain any new messages from the PiBell
         refreshButton = findViewById(R.id.RefreshNotificsButton);
         refreshButton.setOnClickListener(refresh -> {
             // load any new notifications from PiBell
@@ -158,7 +154,6 @@ public class NotificationPage extends AppCompatActivity {
 
         // place on the screen where the pics, checkbox and text are being displayed
         linearView = findViewById(R.id.notifsLinearView);
-
         Context context = getApplicationContext();
         File dir = context.getDir(userName, Context.MODE_PRIVATE); //Creating an internal dir;
         File[] files = dir.listFiles((d, name) -> name.endsWith(".txt"));
@@ -168,6 +163,7 @@ public class NotificationPage extends AppCompatActivity {
             Toast.makeText(getApplicationContext(), "NO SAVED MESSAGE LOGS", Toast.LENGTH_LONG).show();
         }
 
+        // display each one by one for the admin
         for (File file : files) {
             if (!file.getName().equals("Camera.txt") && !file.getName().equals("Notification.txt") && !file.getName().equals("PictureCapture.txt")) {
                 Log.e("file",file.getName());
@@ -339,7 +335,6 @@ public class NotificationPage extends AppCompatActivity {
         } // ends method
     } // ends the getNewNotifications class
 
-
-}
+} // ends the class
 
 

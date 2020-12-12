@@ -14,15 +14,15 @@ import java.net.Socket;
 
 public class guestHelpPage extends AppCompatActivity {
     // Global variables
-    public String userName;                 // current user
-    public String IP;                       // IP address of the user's Raspberry Pi device
-    public String token;                    // user's current token
-    public String email;                    // user's email
-    public String password;                 // user's password
+    public String userName;                     // current user
+    public String IP;                           // IP address of the user's Raspberry Pi device
+    public String token;                        // user's current token
+    public String email;                        // user's email
+    public String password;                     // user's password
 
-    public TextView currentStatus;          // will let the user know the current connection status between the app and the PiBell
-    public Button retryButton;              // allow the user to retry the connection
-    public FloatingActionButton backButton; // go back to the settings page
+    public TextView currentStatus;              // will let the user know the current connection status between the app and the PiBell
+    public Button retryButton;                  // allow the user to retry the connection
+    public FloatingActionButton backButton;     // go back to the settings page
 
     /**
      * This method will be used in order to set up the Admin Help Page.
@@ -41,9 +41,8 @@ public class guestHelpPage extends AppCompatActivity {
         password = getIntent().getExtras().getString("password");
 
 
-
-        currentStatus = findViewById(R.id.GuesthelpPageCurrentConnectionStatus);
         // update the connection status
+        currentStatus = findViewById(R.id.GuesthelpPageCurrentConnectionStatus);
         try {
             String getConStatus = new isConnected().execute(IP).get();
             currentStatus.setText(getConStatus);
@@ -54,8 +53,7 @@ public class guestHelpPage extends AppCompatActivity {
         }
 
 
-
-
+        // retry connection and update the connection status
         retryButton = findViewById(R.id.GuesthelpPageRetryButton);
         retryButton.setOnClickListener(task -> {
             try {
@@ -69,10 +67,7 @@ public class guestHelpPage extends AppCompatActivity {
         });
 
 
-
-
-
-
+        // get back to the guest's help page
         backButton = findViewById(R.id.guestHelpPageBackButton);
         backButton.setOnClickListener(task -> {
             Intent intent = new Intent(this, GuestSettingsPage.class);
@@ -126,4 +121,5 @@ public class guestHelpPage extends AppCompatActivity {
             }
         } // ends the doInBackground() method
     } // ends the isConnected class
-}
+
+} // ends the class

@@ -9,23 +9,13 @@ import android.text.InputType;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Switch;
 import android.widget.Toast;
 import android.widget.ToggleButton;
-
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-
 import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -70,7 +60,7 @@ public class GuestSettingsPage extends AppCompatActivity {
         db = FirebaseFirestore.getInstance();
 
 
-        //Gets the current user
+        // allow the guest to change their current email
         final FirebaseUser user = mAuth.getCurrentUser();
         resetEmail = findViewById(R.id.guestEmailChange);
         resetEmail.setOnClickListener(view -> {
@@ -110,8 +100,7 @@ public class GuestSettingsPage extends AppCompatActivity {
         });
 
 
-
-
+        // allow for the guest to change their password
         newPassword = findViewById(R.id.guestPasswordChange);
         newPassword.setOnClickListener(view -> {
             // Creates an alert to get text from the user to change their email
@@ -150,6 +139,7 @@ public class GuestSettingsPage extends AppCompatActivity {
         });
 
 
+        // go to the help page to look for connection status and get some other help
         helpPage = findViewById(R.id.guestHelpPageButton);
         helpPage.setOnClickListener(task -> {
             Intent intent = new Intent(this, guestHelpPage.class);
@@ -164,7 +154,7 @@ public class GuestSettingsPage extends AppCompatActivity {
 
 
 
-        // once the back button is pressed, request the raspberry pi to end the live stream and then take the user back to the homepage
+        // go back to the guest's home page
         back = this.<Button>findViewById(R.id.guestSettingPageBackButton);
         back.setOnClickListener(view -> {
             try

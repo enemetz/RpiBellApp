@@ -15,11 +15,8 @@ import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
-
 import androidx.appcompat.app.AppCompatActivity;
-
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
@@ -30,6 +27,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 
+/**
+ * This is the MediaPage class that will show the admin user all the media that has been received
+ * and saved.
+ */
 public class MediaPage extends AppCompatActivity {
 
     // Global variables
@@ -93,7 +94,7 @@ public class MediaPage extends AppCompatActivity {
             finish();
         });
 
-
+        // obtain any new pictures that were taken by the PiBell
         refreshButton = findViewById(R.id.RefreshPicsButton);
         refreshButton.setOnClickListener(refresh -> {
             // load any new pictures from the PiBell
@@ -133,7 +134,6 @@ public class MediaPage extends AppCompatActivity {
 
         // place on the screen where the pics, checkbox and text are being displayed
         linearView = findViewById(R.id.PicsLinearView);
-
         Context context = getApplicationContext();
         File dir = context.getDir(userName, Context.MODE_PRIVATE); //Creating an internal dir;
         File[] files = dir.listFiles((d, name) -> name.endsWith(".jpg"));
@@ -143,6 +143,7 @@ public class MediaPage extends AppCompatActivity {
             Toast.makeText(getApplicationContext(), "NO SAVED MEDIA", Toast.LENGTH_LONG).show();
         }
 
+        // display pictures one by one
         for (File file : files) {
             Log.e("file",file.getName());
 
@@ -280,7 +281,5 @@ public class MediaPage extends AppCompatActivity {
             return null;
         } // ends the doInBackground() method
     } // ends the getNewMedia class
-
-
 
 } // ends the MediaPage

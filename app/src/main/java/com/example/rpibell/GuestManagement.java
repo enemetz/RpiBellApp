@@ -1,43 +1,26 @@
 package com.example.rpibell;
 
-import android.content.Context;
 import android.content.Intent;
-import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.os.SystemClock;
 import android.util.Log;
-import android.view.View;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
-
-import java.io.File;
+import com.google.firebase.firestore.QueryDocumentSnapshot;;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
+/**
+ * This is the GuestManagement Class where the admin can view the current guests that are
+ * associated with them.
+ */
 public class GuestManagement extends AppCompatActivity {
     // Global variables
     public String userName;                     // current user
@@ -89,7 +72,7 @@ public class GuestManagement extends AppCompatActivity {
                         }
                     }
 
-                    // display the guests
+                    // display the guests one by one
                     linearView = findViewById(R.id.GuestList);
                     if (guests.size() < 1) {
                         Toast.makeText(getApplicationContext(), "NO ADDED GUESTS", Toast.LENGTH_LONG).show();
@@ -128,7 +111,7 @@ public class GuestManagement extends AppCompatActivity {
         });
 
 
-
+        // get admin info to give to a future trusted guest
         getAdminInfo = findViewById(R.id.adminInfoButton);
         getAdminInfo.setOnClickListener(get -> {
             Intent intent = new Intent(GuestManagement.this, AdminInfoPage.class);
@@ -142,7 +125,7 @@ public class GuestManagement extends AppCompatActivity {
         });
 
 
-
+        // go back to the admin home page
         backButton = findViewById(R.id.backButtonManageGuestPage);
         backButton.setOnClickListener(task -> {
             Intent intent = new Intent(GuestManagement.this, UserHomePage.class);
@@ -155,4 +138,4 @@ public class GuestManagement extends AppCompatActivity {
             finish();
         });
     }
-}
+} // ends the class

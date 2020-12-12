@@ -7,22 +7,20 @@ import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicBoolean;
 
+/**
+ * This is the guestSignUpPage class that is used in order to sign up a new guest user.
+ */
 public class guestSignUpPage extends AppCompatActivity {
-
     // Global variables
     public Button signUpButton;                                                             // sign up new guest
     public EditText guestName, guestEmail, guestPassword, guestPiBellHostname , AdminID;    // info to fill out
@@ -34,15 +32,18 @@ public class guestSignUpPage extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.guest_sign_up_page);
 
+        // connect to Firebase
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
 
+        // get connected to the UI components
         guestName = findViewById(R.id.guestSignUpNameInput);
         guestEmail = findViewById(R.id.guestEmailSignUpPage);
         guestPassword = findViewById(R.id.guestPasswordSignUpPageInput);
         guestPiBellHostname = findViewById(R.id.guestSignUpPiBellName);
         AdminID = findViewById(R.id.guestSignUpAdminIDInput);
 
+        // create new guest account
         signUpButton = findViewById(R.id.guestSignUpButton);
         signUpButton.setOnClickListener(task -> {
             String name, email, password, hostname, adminID;
@@ -74,12 +75,13 @@ public class guestSignUpPage extends AppCompatActivity {
                 return;
             }
 
-            // check if admin exists ...
+            // check if associated admin exists ...
             DocumentReference adminUsers = db.collection("admins").document(adminID);
             adminUsers.get().addOnCompleteListener(task2 -> {
                if (task2.isSuccessful()) {
                    DocumentSnapshot adminDoc = task2.getResult();
                    if (adminDoc.exists()) {
+                       // create new guest account
                        mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(this, makeNewGuestAccount -> {
                            if (makeNewGuestAccount.isSuccessful()) {  // Sign in success
                                Map<String, Object> profile = new HashMap<>();
