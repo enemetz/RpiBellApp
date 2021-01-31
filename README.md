@@ -1,3 +1,2 @@
 ### Overview
-This is the client app for our raspberry pi doorbell.
-This app allows you to connect to the pi over the local network and view the livestream, as well as receive notifcations.
+The PiBell is a contactless doorbell system designed to help limit contact with rarely sanitized surfaces, such as doorbells, during the pandemic. PiBell allows a user to ring the doorbell with just a simple hand wave. After the hand wave is detected, if enabled, the PiBell will send a notification to a client android app along with a picture of the event. The PiBell comes with all of the essential features of other smart doorbells, such as a live view, and a whole host of customizations that the user can make.
